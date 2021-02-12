@@ -4,10 +4,13 @@
     "version": "2.0.0",  
     "tasks": [
         {
-            "label": "Build",
+            "label": "$(debug-start) Build",
             "type": "shell",
             "options": {
-                "cwd": "."
+                "statusbar": {
+                    "tooltip" : "Build HEX",
+                    "color" : "#00FF00"
+                }
             },
             "command": "make",
             "args": [
@@ -40,15 +43,17 @@
             }
         },
         {
-            "label": "Flash",
+            "label": "$(flame) Flash",
             "type": "shell",
             "options": {
-                "cwd": "."
+                "statusbar": {
+                    "tooltip" : "Upload to arduino board",
+                    "color" : "#ff0000"
+                }
             },
-            "command": "make flash",
+            "command": "make",
             "args": [
-                "all",
-                "QUIET=0"
+                "flash"
             ],
             "group": {
                 "kind": "build",
@@ -76,15 +81,52 @@
             }
         },
         {
-            "label": "Clean",
+            "label": "$(clear-all) Clean",
             "type": "shell",
             "options": {
-                "cwd": "${workspaceRoot}/gcc"
+                "statusbar": {
+                    "tooltip" : "Cleanup",
+                    "color" : "#ff8800"
+                }
             },
             "command": "make",
             "args": [
                 "clean",
                 "QUIET=0"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": [
+                    "absolute"
+                ],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
+            "label": "$(gear) Disasm",
+            "type": "shell",
+            "options": {
+                "statusbar": {
+                    "tooltip" : "avr-objdump disasembler",
+                    "color" : "#ff00f2"
+                }
+            },
+            "command": "make",
+            "args": [
+                "disasm"
             ],
             "presentation": {
                 "echo": true,

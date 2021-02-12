@@ -1,4 +1,4 @@
-# Template project for Ubuntu/VSCode AVR8 development
+# Template project for Ubuntu/VSCode AVR8 development on arduino hardware
 
 ## Prerequisites
 
