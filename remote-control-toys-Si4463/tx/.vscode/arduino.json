@@ -1,0 +1,6 @@
+{
+    "board": "arduino:avr:mini",
+    "configuration": "cpu=atmega168",
+    "sketch": "tx.ino",
+    "port": "ttyUSB0"
+}

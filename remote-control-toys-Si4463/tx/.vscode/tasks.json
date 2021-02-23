@@ -1,0 +1,151 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",  
+    "tasks": [
+        {
+            "label": "$(debug-start) Build",
+            "type": "shell",
+            "options": {
+                "statusbar": {
+                    "tooltip" : "Build HEX",
+                    "color" : "#00FF00"
+                }
+            },
+            "command": "make",
+            "args": [
+                "all",
+                "QUIET=0"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": ["relative", "${workspaceFolder}"],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
+            "label": "$(flame) Flash",
+            "type": "shell",
+            "options": {
+                "statusbar": {
+                    "tooltip" : "Upload to arduino board",
+                    "color" : "#ff0000"
+                }
+            },
+            "command": "make",
+            "args": [
+                "flash"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": [
+                    "absolute"
+                ],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
+            "label": "$(clear-all) Clean",
+            "type": "shell",
+            "options": {
+                "statusbar": {
+                    "tooltip" : "Cleanup",
+                    "color" : "#ff8800"
+                }
+            },
+            "command": "make",
+            "args": [
+                "clean",
+                "QUIET=0"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": [
+                    "absolute"
+                ],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
+            "label": "$(gear) Disasm",
+            "type": "shell",
+            "options": {
+                "statusbar": {
+                    "tooltip" : "avr-objdump disasembler",
+                    "color" : "#ff00f2"
+                }
+            },
+            "command": "make",
+            "args": [
+                "disasm"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": [
+                    "absolute"
+                ],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        }
+    ]
+}

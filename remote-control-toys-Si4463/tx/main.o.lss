@@ -1,0 +1,85 @@
+   1               		.file	"main.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.global	setup
+   9               		.type	setup, @function
+  10               	setup:
+  11               	/* prologue: function */
+  12               	/* frame size = 0 */
+  13               	/* stack size = 0 */
+  14               	.L__stack_usage = 0
+  15 0000 9FE0      		ldi r25,lo8(15)
+  16 0002 88E1      		ldi r24,lo8(24)
+  17               	/* #APP */
+  18               	 ;  473 "/usr/lib/avr/include/avr/wdt.h" 1
+  19 0004 0FB6      		in __tmp_reg__,__SREG__
+  20 0006 F894      		cli
+  21 0008 A895      		wdr
+  22 000a 8093 6000 		sts 96, r24
+  23 000e 0FBE      		out __SREG__,__tmp_reg__
+  24 0010 9093 6000 		sts 96, r25
+  25               	 	
+  26               	 ;  0 "" 2
+  27               	 ;  8 "main.c" 1
+  28 0014 A895      		wdr
+  29               	 ;  0 "" 2
+  30               	/* #NOAPP */
+  31 0016 0E94 0000 		call init_state
+  32 001a 0E94 0000 		call init_lcd
+  33 001e 0E94 0000 		call init_mcu_hardware
+  34 0022 0C94 0000 		jmp init_serial
+  35               		.size	setup, .-setup
+  36               	.global	loop
+  37               		.type	loop, @function
+  38               	loop:
+  39               	/* prologue: function */
+  40               	/* frame size = 0 */
+  41               	/* stack size = 0 */
+  42               	.L__stack_usage = 0
+  43 0026 0E94 0000 		call wait_event
+  44 002a 0E94 0000 		call controller
+  45               	/* #APP */
+  46               	 ;  47 "main.c" 1
+  47 002e A895      		wdr
+  48               	 ;  0 "" 2
+  49               	/* #NOAPP */
+  50 0030 0895      		ret
+  51               		.size	loop, .-loop
+  52               		.section	.text.startup,"ax",@progbits
+  53               	.global	main
+  54               		.type	main, @function
+  55               	main:
+  56               	/* prologue: function */
+  57               	/* frame size = 0 */
+  58               	/* stack size = 0 */
+  59               	.L__stack_usage = 0
+  60 0000 0E94 0000 		call setup
+  61               	.L4:
+  62 0004 0E94 0000 		call loop
+  63 0008 00C0      		rjmp .L4
+  64               		.size	main, .-main
+  65               		.ident	"GCC: (GNU) 5.4.0"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 main.c
+     /tmp/ccSUq5cM.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccSUq5cM.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccSUq5cM.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccSUq5cM.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccSUq5cM.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccSUq5cM.s:10     .text:0000000000000000 setup
+     /tmp/ccSUq5cM.s:14     *ABS*:0000000000000000 .L__stack_usage
+     /tmp/ccSUq5cM.s:38     .text:0000000000000026 loop
+     /tmp/ccSUq5cM.s:55     .text.startup:0000000000000000 main
+     /tmp/ccSUq5cM.s:61     .text.startup:0000000000000004 .L4
+
+UNDEFINED SYMBOLS
+init_state
+init_lcd
+init_mcu_hardware
+init_serial
+wait_event
+controller

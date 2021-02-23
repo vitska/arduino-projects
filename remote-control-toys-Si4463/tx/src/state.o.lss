@@ -1,0 +1,109 @@
+   1               		.file	"state.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.global	put_event
+   9               		.type	put_event, @function
+  10               	put_event:
+  11               	/* prologue: function */
+  12               	/* frame size = 0 */
+  13               	/* stack size = 0 */
+  14               	.L__stack_usage = 0
+  15 0000 E091 0000 		lds r30,state
+  16 0004 91E0      		ldi r25,lo8(1)
+  17 0006 9E0F      		add r25,r30
+  18 0008 9093 0000 		sts state,r25
+  19 000c F0E0      		ldi r31,0
+  20 000e E050      		subi r30,lo8(-(state))
+  21 0010 F040      		sbci r31,hi8(-(state))
+  22 0012 8283      		std Z+2,r24
+  23 0014 8091 0000 		lds r24,state
+  24 0018 8031      		cpi r24,lo8(16)
+  25 001a 00F0      		brlo .L2
+  26 001c 1092 0000 		sts state,__zero_reg__
+  27               	.L2:
+  28 0020 9091 0000 		lds r25,state
+  29 0024 8091 0000 		lds r24,state+1
+  30 0028 9813      		cpse r25,r24
+  31 002a 00C0      		rjmp .L1
+  32 002c 8091 0000 		lds r24,state+145
+  33 0030 8160      		ori r24,lo8(1<<0)
+  34 0032 8093 0000 		sts state+145,r24
+  35               	.L1:
+  36 0036 0895      		ret
+  37               		.size	put_event, .-put_event
+  38               	.global	init_state
+  39               		.type	init_state, @function
+  40               	init_state:
+  41               	/* prologue: function */
+  42               	/* frame size = 0 */
+  43               	/* stack size = 0 */
+  44               	.L__stack_usage = 0
+  45 0038 86EA      		ldi r24,lo8(-90)
+  46 003a 91E0      		ldi r25,lo8(1)
+  47 003c E0E0      		ldi r30,lo8(state)
+  48 003e F0E0      		ldi r31,hi8(state)
+  49 0040 DF01      		movw r26,r30
+  50 0042 9C01      		movw r18,r24
+  51               		0:
+  52 0044 1D92      		st X+,__zero_reg__
+  53 0046 2150      		subi r18,1
+  54 0048 3040      		sbci r19,0
+  55 004a 01F4      		brne 0b
+  56 004c 80E0      		ldi r24,0
+  57 004e 0C94 0000 		jmp put_event
+  58               		.size	init_state, .-init_state
+  59               	.global	wait_event
+  60               		.type	wait_event, @function
+  61               	wait_event:
+  62               	/* prologue: function */
+  63               	/* frame size = 0 */
+  64               	/* stack size = 0 */
+  65               	.L__stack_usage = 0
+  66               	.L7:
+  67 0052 9091 0000 		lds r25,state
+  68 0056 8091 0000 		lds r24,state+1
+  69 005a 9817      		cp r25,r24
+  70 005c 01F0      		breq .L7
+  71 005e E091 0000 		lds r30,state+1
+  72 0062 81E0      		ldi r24,lo8(1)
+  73 0064 8E0F      		add r24,r30
+  74 0066 8093 0000 		sts state+1,r24
+  75 006a F0E0      		ldi r31,0
+  76 006c E050      		subi r30,lo8(-(state))
+  77 006e F040      		sbci r31,hi8(-(state))
+  78 0070 8281      		ldd r24,Z+2
+  79 0072 9091 0000 		lds r25,state+1
+  80 0076 9031      		cpi r25,lo8(16)
+  81 0078 00F0      		brlo .L8
+  82 007a 1092 0000 		sts state+1,__zero_reg__
+  83               	.L8:
+  84 007e 0895      		ret
+  85               		.size	wait_event, .-wait_event
+  86               		.comm	config,512,1
+  87               		.comm	state,422,1
+  88               		.ident	"GCC: (GNU) 5.4.0"
+  89               	.global __do_clear_bss
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 state.c
+     /tmp/ccmre1t7.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccmre1t7.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccmre1t7.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccmre1t7.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccmre1t7.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccmre1t7.s:10     .text:0000000000000000 put_event
+     /tmp/ccmre1t7.s:14     *ABS*:0000000000000000 .L__stack_usage
+                            *COM*:00000000000001a6 state
+     /tmp/ccmre1t7.s:27     .text:0000000000000020 .L2
+     /tmp/ccmre1t7.s:35     .text:0000000000000036 .L1
+     /tmp/ccmre1t7.s:40     .text:0000000000000038 init_state
+     /tmp/ccmre1t7.s:61     .text:0000000000000052 wait_event
+     /tmp/ccmre1t7.s:66     .text:0000000000000052 .L7
+     /tmp/ccmre1t7.s:83     .text:000000000000007e .L8
+                            *COM*:0000000000000200 config
+
+UNDEFINED SYMBOLS
+__do_clear_bss

@@ -1,0 +1,62 @@
+   1               		.file	"controller.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.global	controller
+   9               		.type	controller, @function
+  10               	controller:
+  11               	/* prologue: function */
+  12               	/* frame size = 0 */
+  13               	/* stack size = 0 */
+  14               	.L__stack_usage = 0
+  15 0000 8130      		cpi r24,lo8(1)
+  16 0002 01F0      		breq .L3
+  17 0004 00F0      		brlo .L4
+  18 0006 8230      		cpi r24,lo8(2)
+  19 0008 01F0      		breq .L5
+  20 000a 8330      		cpi r24,lo8(3)
+  21 000c 01F0      		breq .L6
+  22 000e 0895      		ret
+  23               	.L4:
+  24 0010 41E4      		ldi r20,lo8(65)
+  25 0012 66E5      		ldi r22,lo8(86)
+  26 0014 80E0      		ldi r24,lo8(state+18)
+  27 0016 90E0      		ldi r25,hi8(state+18)
+  28 0018 0C94 0000 		jmp serial_write_block
+  29               	.L6:
+  30 001c 42E0      		ldi r20,lo8(2)
+  31 001e 62E0      		ldi r22,lo8(2)
+  32 0020 80E0      		ldi r24,lo8(state+149)
+  33 0022 90E0      		ldi r25,hi8(state+149)
+  34 0024 0C94 0000 		jmp blink
+  35               	.L5:
+  36 0028 0C94 0000 		jmp update_lcd
+  37               	.L3:
+  38 002c 80E0      		ldi r24,lo8(state+149)
+  39 002e 90E0      		ldi r25,hi8(state+149)
+  40 0030 0C94 0000 		jmp blink_step
+  41               		.size	controller, .-controller
+  42               		.ident	"GCC: (GNU) 5.4.0"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 controller.c
+     /tmp/cc6dnG8l.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/cc6dnG8l.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/cc6dnG8l.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/cc6dnG8l.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/cc6dnG8l.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/cc6dnG8l.s:10     .text:0000000000000000 controller
+     /tmp/cc6dnG8l.s:14     *ABS*:0000000000000000 .L__stack_usage
+     /tmp/cc6dnG8l.s:37     .text:000000000000002c .L3
+     /tmp/cc6dnG8l.s:23     .text:0000000000000010 .L4
+     /tmp/cc6dnG8l.s:35     .text:0000000000000028 .L5
+     /tmp/cc6dnG8l.s:29     .text:000000000000001c .L6
+
+UNDEFINED SYMBOLS
+state
+serial_write_block
+blink
+update_lcd
+blink_step

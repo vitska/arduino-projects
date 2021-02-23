@@ -1,7 +1,8 @@
+#include <avr/io.h>
 #include <avr/wdt.h>
-#include "tx.h"
+#include <util/delay.h>
+#include "inc/tx.h"
 
-// the setup function runs once when you press reset or power the board
 void setup() {
   wdt_enable(WDTO_2S);
   wdt_reset();
@@ -11,7 +12,8 @@ void setup() {
   init_state();
   init_lcd();
   init_mcu_hardware(); // Init continuous MCU ADC scan
-  scan_i2c();
+  init_serial();
+//  scan_i2c();
 //  tone(5, 5000, 100);
 }
 
@@ -43,4 +45,12 @@ void loop()
 
   controller(wait_event());
   wdt_reset();
+}
+
+int main(void){
+    setup();
+    while(1)
+    {
+        loop();
+    }
 }

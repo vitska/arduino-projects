@@ -5,7 +5,7 @@
 
 
 void SPI_Send (uint8_t value, uint8_t length);
-uint8_t setbit(const uint8_t value, const uint8_t position);
+//uint8_t setbit(const uint8_t value, const uint8_t position);
 int unsetbit(const int value, const int position);
 uint8_t checkbit(const uint8_t value, const uint8_t position);
 
@@ -26,7 +26,8 @@ void DoubleRate(int8_t dr); // 0 -> L, 1 -> H
 void Bat(int8_t pos); // 0 - 4, 0 -> low, 4 -> full
 void Ant(int8_t on); // 0 -> off, 1 -> on
 void Quadro(int8_t on); // 0 -> off, 1 -> on
-void Throtle(uint8_t throttle); // 0 -- 11
+void ThrotleRight(uint8_t throttle); // 0 -- 11
+void ThrotleLeft(uint8_t throttle); // 0 -- 11
 void Elevator(int8_t pos); // -5 -- 5
 void Eleron(int8_t pos); // -5 -- 5
 void Rudder(int8_t pos); // -7 -- 7

@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "name": "ATmega168-AVRGCC",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/lib/avr/include/**",
+                "/usr/include/**"
+            ],
+            "defines": [
+                "F_CPU=8000000",
+                "__GNUC__=5",
+                "__GNUC_MINOR__=4",
+                "__ATmega168__",
+                "__AVR_ATmega168__",
+                "__AVR_DEV_LIB_NAME__=m168"
+            ],
+            "cStandard": "c99",
+            "cppStandard": "c++03",
+            "intelliSenseMode": "gcc-x86"
+        }
+    ],
+    "version": 4
+}

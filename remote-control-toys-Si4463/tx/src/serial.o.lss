@@ -1,0 +1,320 @@
+   1               		.file	"serial.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.global	b2c
+   9               		.type	b2c, @function
+  10               	b2c:
+  11               	/* prologue: function */
+  12               	/* frame size = 0 */
+  13               	/* stack size = 0 */
+  14               	.L__stack_usage = 0
+  15 0000 8A30      		cpi r24,lo8(10)
+  16 0002 00F4      		brsh .L2
+  17 0004 805D      		subi r24,lo8(-(48))
+  18 0006 0895      		ret
+  19               	.L2:
+  20 0008 895C      		subi r24,lo8(-(55))
+  21 000a 0895      		ret
+  22               		.size	b2c, .-b2c
+  23               	.global	__vector_20
+  24               		.type	__vector_20, @function
+  25               	__vector_20:
+  26 000c 1F92      		push r1
+  27 000e 0F92      		push r0
+  28 0010 0FB6      		in r0,__SREG__
+  29 0012 0F92      		push r0
+  30 0014 1124      		clr __zero_reg__
+  31 0016 2F93      		push r18
+  32 0018 3F93      		push r19
+  33 001a 4F93      		push r20
+  34 001c 5F93      		push r21
+  35 001e 6F93      		push r22
+  36 0020 7F93      		push r23
+  37 0022 8F93      		push r24
+  38 0024 9F93      		push r25
+  39 0026 AF93      		push r26
+  40 0028 BF93      		push r27
+  41 002a EF93      		push r30
+  42 002c FF93      		push r31
+  43               	/* prologue: Signal */
+  44               	/* frame size = 0 */
+  45               	/* stack size = 15 */
+  46               	.L__stack_usage = 15
+  47 002e 8091 0000 		lds r24,state+415
+  48 0032 8430      		cpi r24,lo8(4)
+  49 0034 01F4      		brne .+2
+  50 0036 00C0      		rjmp .L7
+  51 0038 00F4      		brsh .L8
+  52 003a 8130      		cpi r24,lo8(1)
+  53 003c 01F0      		breq .L9
+  54 003e 00F0      		brlo .L10
+  55 0040 8230      		cpi r24,lo8(2)
+  56 0042 01F4      		brne .+2
+  57 0044 00C0      		rjmp .L11
+  58 0046 8330      		cpi r24,lo8(3)
+  59 0048 01F0      		breq .+2
+  60 004a 00C0      		rjmp .L5
+  61 004c 84E0      		ldi r24,lo8(4)
+  62 004e 8093 0000 		sts state+415,r24
+  63 0052 E091 0000 		lds r30,state+418
+  64 0056 F091 0000 		lds r31,state+418+1
+  65 005a 8091 0000 		lds r24,state+417
+  66 005e E80F      		add r30,r24
+  67 0060 F11D      		adc r31,__zero_reg__
+  68 0062 8081      		ld r24,Z
+  69 0064 00C0      		rjmp .L21
+  70               	.L8:
+  71 0066 8630      		cpi r24,lo8(6)
+  72 0068 01F4      		brne .+2
+  73 006a 00C0      		rjmp .L13
+  74 006c 00F4      		brsh .+2
+  75 006e 00C0      		rjmp .L14
+  76 0070 8730      		cpi r24,lo8(7)
+  77 0072 01F4      		brne .+2
+  78 0074 00C0      		rjmp .L15
+  79 0076 8F3F      		cpi r24,lo8(-1)
+  80 0078 01F0      		breq .+2
+  81 007a 00C0      		rjmp .L5
+  82 007c 1092 0000 		sts state+415,__zero_reg__
+  83 0080 8AE0      		ldi r24,lo8(10)
+  84 0082 8093 C600 		sts 198,r24
+  85 0086 85E0      		ldi r24,lo8(5)
+  86 0088 0E94 0000 		call put_event
+  87 008c 8091 0000 		lds r24,state+421
+  88 0090 8093 0000 		sts state+416,r24
+  89 0094 1092 0000 		sts state+417,__zero_reg__
+  90 0098 00C0      		rjmp .L5
+  91               	.L10:
+  92 009a 81E0      		ldi r24,lo8(1)
+  93 009c 8093 0000 		sts state+415,r24
+  94 00a0 8091 0000 		lds r24,state+420
+  95 00a4 00C0      		rjmp .L21
+  96               	.L9:
+  97 00a6 82E0      		ldi r24,lo8(2)
+  98 00a8 8093 0000 		sts state+415,r24
+  99 00ac 8091 0000 		lds r24,state+420
+ 100 00b0 8F70      		andi r24,lo8(15)
+ 101 00b2 0E94 0000 		call b2c
+ 102 00b6 8093 C600 		sts 198,r24
+ 103 00ba 9091 0000 		lds r25,state+420
+ 104 00be 8091 0000 		lds r24,state+416
+ 105 00c2 890F      		add r24,r25
+ 106 00c4 8093 0000 		sts state+416,r24
+ 107 00c8 00C0      		rjmp .L5
+ 108               	.L11:
+ 109 00ca 83E0      		ldi r24,lo8(3)
+ 110 00cc 00C0      		rjmp .L22
+ 111               	.L7:
+ 112 00ce 83E0      		ldi r24,lo8(3)
+ 113 00d0 8093 0000 		sts state+415,r24
+ 114 00d4 E091 0000 		lds r30,state+418
+ 115 00d8 F091 0000 		lds r31,state+418+1
+ 116 00dc 8091 0000 		lds r24,state+417
+ 117 00e0 E80F      		add r30,r24
+ 118 00e2 F11D      		adc r31,__zero_reg__
+ 119 00e4 8081      		ld r24,Z
+ 120 00e6 9091 0000 		lds r25,state+416
+ 121 00ea 980F      		add r25,r24
+ 122 00ec 9093 0000 		sts state+416,r25
+ 123 00f0 8F70      		andi r24,lo8(15)
+ 124 00f2 0E94 0000 		call b2c
+ 125 00f6 8093 C600 		sts 198,r24
+ 126 00fa 8091 0000 		lds r24,state+417
+ 127 00fe 8F5F      		subi r24,lo8(-(1))
+ 128 0100 8093 0000 		sts state+417,r24
+ 129 0104 8091 0000 		lds r24,state+417
+ 130 0108 8370      		andi r24,lo8(3)
+ 131 010a 01F0      		breq .L18
+ 132 010c 83E0      		ldi r24,lo8(3)
+ 133 010e 00C0      		rjmp .L17
+ 134               	.L18:
+ 135 0110 82E0      		ldi r24,lo8(2)
+ 136               	.L17:
+ 137 0112 8093 0000 		sts state+415,r24
+ 138 0116 9091 0000 		lds r25,state+417
+ 139 011a 8091 0000 		lds r24,state+420
+ 140 011e 9817      		cp r25,r24
+ 141 0120 00F0      		brlo .L5
+ 142 0122 85E0      		ldi r24,lo8(5)
+ 143 0124 8093 0000 		sts state+415,r24
+ 144 0128 00C0      		rjmp .L5
+ 145               	.L14:
+ 146 012a 86E0      		ldi r24,lo8(6)
+ 147               	.L22:
+ 148 012c 8093 0000 		sts state+415,r24
+ 149 0130 8DE2      		ldi r24,lo8(45)
+ 150 0132 00C0      		rjmp .L20
+ 151               	.L13:
+ 152 0134 87E0      		ldi r24,lo8(7)
+ 153 0136 8093 0000 		sts state+415,r24
+ 154 013a 8091 0000 		lds r24,state+416
+ 155               	.L21:
+ 156 013e 8295      		swap r24
+ 157 0140 00C0      		rjmp .L19
+ 158               	.L15:
+ 159 0142 8FEF      		ldi r24,lo8(-1)
+ 160 0144 8093 0000 		sts state+415,r24
+ 161 0148 8091 0000 		lds r24,state+416
+ 162               	.L19:
+ 163 014c 8F70      		andi r24,lo8(15)
+ 164 014e 0E94 0000 		call b2c
+ 165               	.L20:
+ 166 0152 8093 C600 		sts 198,r24
+ 167               	.L5:
+ 168               	/* epilogue start */
+ 169 0156 FF91      		pop r31
+ 170 0158 EF91      		pop r30
+ 171 015a BF91      		pop r27
+ 172 015c AF91      		pop r26
+ 173 015e 9F91      		pop r25
+ 174 0160 8F91      		pop r24
+ 175 0162 7F91      		pop r23
+ 176 0164 6F91      		pop r22
+ 177 0166 5F91      		pop r21
+ 178 0168 4F91      		pop r20
+ 179 016a 3F91      		pop r19
+ 180 016c 2F91      		pop r18
+ 181 016e 0F90      		pop r0
+ 182 0170 0FBE      		out __SREG__,r0
+ 183 0172 0F90      		pop r0
+ 184 0174 1F90      		pop r1
+ 185 0176 1895      		reti
+ 186               		.size	__vector_20, .-__vector_20
+ 187               	.global	usart_pop_in_byte
+ 188               		.type	usart_pop_in_byte, @function
+ 189               	usart_pop_in_byte:
+ 190               	/* prologue: function */
+ 191               	/* frame size = 0 */
+ 192               	/* stack size = 0 */
+ 193               	.L__stack_usage = 0
+ 194 0178 8091 C100 		lds r24,193
+ 195 017c 8068      		ori r24,lo8(-128)
+ 196 017e 8093 C100 		sts 193,r24
+ 197 0182 E091 0000 		lds r30,state+157
+ 198 0186 F091 0000 		lds r31,state+157+1
+ 199 018a E050      		subi r30,lo8(-(state+159))
+ 200 018c F040      		sbci r31,hi8(-(state+159))
+ 201 018e 8081      		ld r24,Z
+ 202 0190 2091 0000 		lds r18,state+157
+ 203 0194 3091 0000 		lds r19,state+157+1
+ 204 0198 2F5F      		subi r18,-1
+ 205 019a 3F4F      		sbci r19,-1
+ 206 019c 3093 0000 		sts state+157+1,r19
+ 207 01a0 2093 0000 		sts state+157,r18
+ 208 01a4 2091 0000 		lds r18,state+157
+ 209 01a8 3091 0000 		lds r19,state+157+1
+ 210 01ac 2F3F      		cpi r18,-1
+ 211 01ae 3105      		cpc r19,__zero_reg__
+ 212 01b0 01F0      		breq .L24
+ 213 01b2 00F0      		brlo .L24
+ 214 01b4 1092 0000 		sts state+157+1,__zero_reg__
+ 215 01b8 1092 0000 		sts state+157,__zero_reg__
+ 216               	.L24:
+ 217 01bc 0895      		ret
+ 218               		.size	usart_pop_in_byte, .-usart_pop_in_byte
+ 219               	.global	serial_write_block
+ 220               		.type	serial_write_block, @function
+ 221               	serial_write_block:
+ 222               	/* prologue: function */
+ 223               	/* frame size = 0 */
+ 224               	/* stack size = 0 */
+ 225               	.L__stack_usage = 0
+ 226               	.L26:
+ 227 01be 2091 C100 		lds r18,193
+ 228 01c2 26FD      		sbrc r18,6
+ 229 01c4 00C0      		rjmp .L26
+ 230 01c6 1092 0000 		sts state+415,__zero_reg__
+ 231 01ca 4093 0000 		sts state+421,r20
+ 232 01ce 4093 0000 		sts state+416,r20
+ 233 01d2 1092 0000 		sts state+417,__zero_reg__
+ 234 01d6 9093 0000 		sts state+418+1,r25
+ 235 01da 8093 0000 		sts state+418,r24
+ 236 01de 6093 0000 		sts state+420,r22
+ 237 01e2 8091 C100 		lds r24,193
+ 238 01e6 8064      		ori r24,lo8(64)
+ 239 01e8 8093 C100 		sts 193,r24
+ 240 01ec 4093 C600 		sts 198,r20
+ 241 01f0 0895      		ret
+ 242               		.size	serial_write_block, .-serial_write_block
+ 243               	.global	serial_write
+ 244               		.type	serial_write, @function
+ 245               	serial_write:
+ 246               	/* prologue: function */
+ 247               	/* frame size = 0 */
+ 248               	/* stack size = 0 */
+ 249               	.L__stack_usage = 0
+ 250 01f2 8093 C600 		sts 198,r24
+ 251 01f6 0895      		ret
+ 252               		.size	serial_write, .-serial_write
+ 253               	.global	init_serial
+ 254               		.type	init_serial, @function
+ 255               	init_serial:
+ 256               	/* prologue: function */
+ 257               	/* frame size = 0 */
+ 258               	/* stack size = 0 */
+ 259               	.L__stack_usage = 0
+ 260 01f8 81E0      		ldi r24,lo8(1)
+ 261 01fa 90E0      		ldi r25,0
+ 262 01fc 9093 C500 		sts 196+1,r25
+ 263 0200 8093 C400 		sts 196,r24
+ 264 0204 E0EC      		ldi r30,lo8(-64)
+ 265 0206 F0E0      		ldi r31,0
+ 266 0208 8081      		ld r24,Z
+ 267 020a 8260      		ori r24,lo8(2)
+ 268 020c 8083      		st Z,r24
+ 269 020e 88E1      		ldi r24,lo8(24)
+ 270 0210 8093 C100 		sts 193,r24
+ 271 0214 86E0      		ldi r24,lo8(6)
+ 272 0216 8093 C200 		sts 194,r24
+ 273 021a 0895      		ret
+ 274               		.size	init_serial, .-init_serial
+ 275               	.global	serial_baud
+ 276               		.section	.rodata
+ 277               		.type	serial_baud, @object
+ 278               		.size	serial_baud, 2
+ 279               	serial_baud:
+ 280 0000 0100      		.word	1
+ 281               		.ident	"GCC: (GNU) 5.4.0"
+ 282               	.global __do_copy_data
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 serial.c
+     /tmp/ccQL2bS1.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccQL2bS1.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccQL2bS1.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccQL2bS1.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccQL2bS1.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccQL2bS1.s:10     .text:0000000000000000 b2c
+     /tmp/ccQL2bS1.s:14     *ABS*:0000000000000000 .L__stack_usage
+     /tmp/ccQL2bS1.s:19     .text:0000000000000008 .L2
+     /tmp/ccQL2bS1.s:25     .text:000000000000000c __vector_20
+     /tmp/ccQL2bS1.s:111    .text:00000000000000ce .L7
+     /tmp/ccQL2bS1.s:70     .text:0000000000000066 .L8
+     /tmp/ccQL2bS1.s:96     .text:00000000000000a6 .L9
+     /tmp/ccQL2bS1.s:91     .text:000000000000009a .L10
+     /tmp/ccQL2bS1.s:108    .text:00000000000000ca .L11
+     /tmp/ccQL2bS1.s:167    .text:0000000000000156 .L5
+     /tmp/ccQL2bS1.s:155    .text:000000000000013e .L21
+     /tmp/ccQL2bS1.s:151    .text:0000000000000134 .L13
+     /tmp/ccQL2bS1.s:145    .text:000000000000012a .L14
+     /tmp/ccQL2bS1.s:158    .text:0000000000000142 .L15
+     /tmp/ccQL2bS1.s:147    .text:000000000000012c .L22
+     /tmp/ccQL2bS1.s:134    .text:0000000000000110 .L18
+     /tmp/ccQL2bS1.s:136    .text:0000000000000112 .L17
+     /tmp/ccQL2bS1.s:165    .text:0000000000000152 .L20
+     /tmp/ccQL2bS1.s:162    .text:000000000000014c .L19
+     /tmp/ccQL2bS1.s:189    .text:0000000000000178 usart_pop_in_byte
+     /tmp/ccQL2bS1.s:216    .text:00000000000001bc .L24
+     /tmp/ccQL2bS1.s:221    .text:00000000000001be serial_write_block
+     /tmp/ccQL2bS1.s:226    .text:00000000000001be .L26
+     /tmp/ccQL2bS1.s:245    .text:00000000000001f2 serial_write
+     /tmp/ccQL2bS1.s:255    .text:00000000000001f8 init_serial
+     /tmp/ccQL2bS1.s:279    .rodata:0000000000000000 serial_baud
+
+UNDEFINED SYMBOLS
+state
+put_event
+__do_copy_data

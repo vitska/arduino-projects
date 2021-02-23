@@ -1,0 +1,171 @@
+   1               		.file	"blink.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.global	blink_step
+   9               		.type	blink_step, @function
+  10               	blink_step:
+  11               	/* prologue: function */
+  12               	/* frame size = 0 */
+  13               	/* stack size = 0 */
+  14               	.L__stack_usage = 0
+  15 0000 FC01      		movw r30,r24
+  16 0002 8081      		ld r24,Z
+  17 0004 8F73      		andi r24,lo8(63)
+  18 0006 01F4      		brne .+2
+  19 0008 00C0      		rjmp .L1
+  20 000a 8081      		ld r24,Z
+  21 000c 982F      		mov r25,r24
+  22 000e 9295      		swap r25
+  23 0010 9695      		lsr r25
+  24 0012 9695      		lsr r25
+  25 0014 9370      		andi r25,lo8(3)
+  26 0016 8181      		ldd r24,Z+1
+  27 0018 8770      		andi r24,lo8(7)
+  28 001a 880F      		lsl r24
+  29 001c 880F      		lsl r24
+  30 001e 892B      		or r24,r25
+  31 0020 91E0      		ldi r25,lo8(1)
+  32 0022 980F      		add r25,r24
+  33 0024 9F71      		andi r25,lo8(31)
+  34 0026 392F      		mov r19,r25
+  35 0028 3295      		swap r19
+  36 002a 330F      		lsl r19
+  37 002c 330F      		lsl r19
+  38 002e 307C      		andi r19,lo8(-64)
+  39 0030 2081      		ld r18,Z
+  40 0032 2F73      		andi r18,lo8(63)
+  41 0034 232B      		or r18,r19
+  42 0036 2083      		st Z,r18
+  43 0038 9695      		lsr r25
+  44 003a 9695      		lsr r25
+  45 003c 2181      		ldd r18,Z+1
+  46 003e 287F      		andi r18,lo8(-8)
+  47 0040 922B      		or r25,r18
+  48 0042 9183      		std Z+1,r25
+  49 0044 2181      		ldd r18,Z+1
+  50 0046 2695      		lsr r18
+  51 0048 2695      		lsr r18
+  52 004a 2695      		lsr r18
+  53 004c 90E0      		ldi r25,0
+  54 004e 30E0      		ldi r19,0
+  55 0050 8217      		cp r24,r18
+  56 0052 9307      		cpc r25,r19
+  57 0054 04F0      		brlt .L4
+  58 0056 8081      		ld r24,Z
+  59 0058 8F73      		andi r24,lo8(63)
+  60 005a 8083      		st Z,r24
+  61 005c 8181      		ldd r24,Z+1
+  62 005e 887F      		andi r24,lo8(-8)
+  63 0060 8183      		std Z+1,r24
+  64 0062 8081      		ld r24,Z
+  65 0064 815C      		subi r24,lo8(-(63))
+  66 0066 982F      		mov r25,r24
+  67 0068 9F73      		andi r25,lo8(63)
+  68 006a 8081      		ld r24,Z
+  69 006c 807C      		andi r24,lo8(-64)
+  70 006e 892B      		or r24,r25
+  71 0070 8083      		st Z,r24
+  72 0072 9BB1      		in r25,0xb
+  73 0074 80E1      		ldi r24,lo8(16)
+  74 0076 8927      		eor r24,r25
+  75 0078 8BB9      		out 0xb,r24
+  76               	.L4:
+  77 007a 5C9B      		sbis 0xb,4
+  78 007c 00C0      		rjmp .L1
+  79 007e 8081      		ld r24,Z
+  80 0080 982F      		mov r25,r24
+  81 0082 9295      		swap r25
+  82 0084 9695      		lsr r25
+  83 0086 9695      		lsr r25
+  84 0088 9370      		andi r25,lo8(3)
+  85 008a 8181      		ldd r24,Z+1
+  86 008c 8770      		andi r24,lo8(7)
+  87 008e 880F      		lsl r24
+  88 0090 880F      		lsl r24
+  89 0092 892B      		or r24,r25
+  90 0094 8E5F      		subi r24,lo8(-(2))
+  91 0096 8F71      		andi r24,lo8(31)
+  92 0098 282F      		mov r18,r24
+  93 009a 2295      		swap r18
+  94 009c 220F      		lsl r18
+  95 009e 220F      		lsl r18
+  96 00a0 207C      		andi r18,lo8(-64)
+  97 00a2 9081      		ld r25,Z
+  98 00a4 9F73      		andi r25,lo8(63)
+  99 00a6 922B      		or r25,r18
+ 100 00a8 9083      		st Z,r25
+ 101 00aa 8695      		lsr r24
+ 102 00ac 8695      		lsr r24
+ 103 00ae 9181      		ldd r25,Z+1
+ 104 00b0 987F      		andi r25,lo8(-8)
+ 105 00b2 892B      		or r24,r25
+ 106 00b4 8183      		std Z+1,r24
+ 107               	.L1:
+ 108 00b6 0895      		ret
+ 109               		.size	blink_step, .-blink_step
+ 110               	.global	blink
+ 111               		.type	blink, @function
+ 112               	blink:
+ 113               	/* prologue: function */
+ 114               	/* frame size = 0 */
+ 115               	/* stack size = 0 */
+ 116               	.L__stack_usage = 0
+ 117 00b8 FC01      		movw r30,r24
+ 118 00ba 5C9A      		sbi 0xb,4
+ 119 00bc 660F      		lsl r22
+ 120 00be 660F      		lsl r22
+ 121 00c0 660F      		lsl r22
+ 122 00c2 8181      		ldd r24,Z+1
+ 123 00c4 8770      		andi r24,lo8(7)
+ 124 00c6 682B      		or r22,r24
+ 125 00c8 6183      		std Z+1,r22
+ 126 00ca 440F      		lsl r20
+ 127 00cc 4150      		subi r20,lo8(-(-1))
+ 128 00ce 942F      		mov r25,r20
+ 129 00d0 9F73      		andi r25,lo8(63)
+ 130 00d2 4081      		ld r20,Z
+ 131 00d4 407C      		andi r20,lo8(-64)
+ 132 00d6 492B      		or r20,r25
+ 133 00d8 4083      		st Z,r20
+ 134 00da 8081      		ld r24,Z
+ 135 00dc 8F73      		andi r24,lo8(63)
+ 136 00de 8083      		st Z,r24
+ 137 00e0 8181      		ldd r24,Z+1
+ 138 00e2 887F      		andi r24,lo8(-8)
+ 139 00e4 8183      		std Z+1,r24
+ 140 00e6 0895      		ret
+ 141               		.size	blink, .-blink
+ 142               	.global	init_blink
+ 143               		.type	init_blink, @function
+ 144               	init_blink:
+ 145               	/* prologue: function */
+ 146               	/* frame size = 0 */
+ 147               	/* stack size = 0 */
+ 148               	.L__stack_usage = 0
+ 149 00e8 41E0      		ldi r20,lo8(1)
+ 150 00ea 64E0      		ldi r22,lo8(4)
+ 151 00ec 80E0      		ldi r24,lo8(state+149)
+ 152 00ee 90E0      		ldi r25,hi8(state+149)
+ 153 00f0 0C94 0000 		jmp blink
+ 154               		.size	init_blink, .-init_blink
+ 155               		.ident	"GCC: (GNU) 5.4.0"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 blink.c
+     /tmp/ccalOhrx.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccalOhrx.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccalOhrx.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccalOhrx.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccalOhrx.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccalOhrx.s:10     .text:0000000000000000 blink_step
+     /tmp/ccalOhrx.s:14     *ABS*:0000000000000000 .L__stack_usage
+     /tmp/ccalOhrx.s:107    .text:00000000000000b6 .L1
+     /tmp/ccalOhrx.s:76     .text:000000000000007a .L4
+     /tmp/ccalOhrx.s:112    .text:00000000000000b8 blink
+     /tmp/ccalOhrx.s:144    .text:00000000000000e8 init_blink
+
+UNDEFINED SYMBOLS
+state

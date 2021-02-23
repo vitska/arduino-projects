@@ -1,0 +1,249 @@
+   1               		.file	"mcu.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.global	count_for_event
+   9               		.type	count_for_event, @function
+  10               	count_for_event:
+  11               	/* prologue: function */
+  12               	/* frame size = 0 */
+  13               	/* stack size = 0 */
+  14               	.L__stack_usage = 0
+  15 0000 FC01      		movw r30,r24
+  16 0002 842F      		mov r24,r20
+  17 0004 9081      		ld r25,Z
+  18 0006 21E0      		ldi r18,lo8(1)
+  19 0008 290F      		add r18,r25
+  20 000a 2083      		st Z,r18
+  21 000c 9617      		cp r25,r22
+  22 000e 00F0      		brlo .L1
+  23 0010 1082      		st Z,__zero_reg__
+  24 0012 0C94 0000 		jmp put_event
+  25               	.L1:
+  26 0016 0895      		ret
+  27               		.size	count_for_event, .-count_for_event
+  28               	.global	__vector_16
+  29               		.type	__vector_16, @function
+  30               	__vector_16:
+  31 0018 1F92      		push r1
+  32 001a 0F92      		push r0
+  33 001c 0FB6      		in r0,__SREG__
+  34 001e 0F92      		push r0
+  35 0020 1124      		clr __zero_reg__
+  36 0022 2F93      		push r18
+  37 0024 3F93      		push r19
+  38 0026 4F93      		push r20
+  39 0028 5F93      		push r21
+  40 002a 6F93      		push r22
+  41 002c 7F93      		push r23
+  42 002e 8F93      		push r24
+  43 0030 9F93      		push r25
+  44 0032 AF93      		push r26
+  45 0034 BF93      		push r27
+  46 0036 EF93      		push r30
+  47 0038 FF93      		push r31
+  48               	/* prologue: Signal */
+  49               	/* frame size = 0 */
+  50               	/* stack size = 15 */
+  51               	.L__stack_usage = 15
+  52 003a 41E0      		ldi r20,lo8(1)
+  53 003c 69E0      		ldi r22,lo8(9)
+  54 003e 80E0      		ldi r24,lo8(state+146)
+  55 0040 90E0      		ldi r25,hi8(state+146)
+  56 0042 0E94 0000 		call count_for_event
+  57 0046 42E0      		ldi r20,lo8(2)
+  58 0048 60E3      		ldi r22,lo8(48)
+  59 004a 80E0      		ldi r24,lo8(state+147)
+  60 004c 90E0      		ldi r25,hi8(state+147)
+  61 004e 0E94 0000 		call count_for_event
+  62 0052 43E0      		ldi r20,lo8(3)
+  63 0054 64EF      		ldi r22,lo8(-12)
+  64 0056 80E0      		ldi r24,lo8(state+148)
+  65 0058 90E0      		ldi r25,hi8(state+148)
+  66 005a 0E94 0000 		call count_for_event
+  67               	/* epilogue start */
+  68 005e FF91      		pop r31
+  69 0060 EF91      		pop r30
+  70 0062 BF91      		pop r27
+  71 0064 AF91      		pop r26
+  72 0066 9F91      		pop r25
+  73 0068 8F91      		pop r24
+  74 006a 7F91      		pop r23
+  75 006c 6F91      		pop r22
+  76 006e 5F91      		pop r21
+  77 0070 4F91      		pop r20
+  78 0072 3F91      		pop r19
+  79 0074 2F91      		pop r18
+  80 0076 0F90      		pop r0
+  81 0078 0FBE      		out __SREG__,r0
+  82 007a 0F90      		pop r0
+  83 007c 1F90      		pop r1
+  84 007e 1895      		reti
+  85               		.size	__vector_16, .-__vector_16
+  86               	.global	__vector_21
+  87               		.type	__vector_21, @function
+  88               	__vector_21:
+  89 0080 1F92      		push r1
+  90 0082 0F92      		push r0
+  91 0084 0FB6      		in r0,__SREG__
+  92 0086 0F92      		push r0
+  93 0088 1124      		clr __zero_reg__
+  94 008a 2F93      		push r18
+  95 008c 3F93      		push r19
+  96 008e 4F93      		push r20
+  97 0090 5F93      		push r21
+  98 0092 8F93      		push r24
+  99 0094 9F93      		push r25
+ 100 0096 AF93      		push r26
+ 101 0098 BF93      		push r27
+ 102 009a EF93      		push r30
+ 103 009c FF93      		push r31
+ 104               	/* prologue: Signal */
+ 105               	/* frame size = 0 */
+ 106               	/* stack size = 13 */
+ 107               	.L__stack_usage = 13
+ 108 009e 4091 7C00 		lds r20,124
+ 109 00a2 4770      		andi r20,lo8(7)
+ 110 00a4 842F      		mov r24,r20
+ 111 00a6 90E0      		ldi r25,0
+ 112 00a8 2091 7800 		lds r18,120
+ 113 00ac 3091 7900 		lds r19,120+1
+ 114 00b0 220F      		lsl r18
+ 115 00b2 331F      		rol r19
+ 116 00b4 3450      		subi r19,4
+ 117 00b6 FC01      		movw r30,r24
+ 118 00b8 EE0F      		lsl r30
+ 119 00ba FF1F      		rol r31
+ 120 00bc E050      		subi r30,lo8(-(state+18))
+ 121 00be F040      		sbci r31,hi8(-(state+18))
+ 122 00c0 3183      		std Z+1,r19
+ 123 00c2 2083      		st Z,r18
+ 124 00c4 4430      		cpi r20,lo8(4)
+ 125 00c6 00F4      		brsh .L6
+ 126 00c8 4081      		ld r20,Z
+ 127 00ca 5181      		ldd r21,Z+1
+ 128 00cc DC01      		movw r26,r24
+ 129 00ce AA0F      		lsl r26
+ 130 00d0 BB1F      		rol r27
+ 131 00d2 A050      		subi r26,lo8(-(config+275))
+ 132 00d4 B040      		sbci r27,hi8(-(config+275))
+ 133 00d6 2D91      		ld r18,X+
+ 134 00d8 3C91      		ld r19,X
+ 135 00da 220F      		lsl r18
+ 136 00dc 331F      		rol r19
+ 137 00de 220F      		lsl r18
+ 138 00e0 331F      		rol r19
+ 139 00e2 240F      		add r18,r20
+ 140 00e4 351F      		adc r19,r21
+ 141 00e6 3183      		std Z+1,r19
+ 142 00e8 2083      		st Z,r18
+ 143               	.L6:
+ 144 00ea 0196      		adiw r24,1
+ 145 00ec 2091 7C00 		lds r18,124
+ 146 00f0 287F      		andi r18,lo8(-8)
+ 147 00f2 8770      		andi r24,7
+ 148 00f4 9927      		clr r25
+ 149 00f6 822B      		or r24,r18
+ 150 00f8 8093 7C00 		sts 124,r24
+ 151 00fc 8091 7A00 		lds r24,122
+ 152 0100 8064      		ori r24,lo8(64)
+ 153 0102 8093 7A00 		sts 122,r24
+ 154               	/* epilogue start */
+ 155 0106 FF91      		pop r31
+ 156 0108 EF91      		pop r30
+ 157 010a BF91      		pop r27
+ 158 010c AF91      		pop r26
+ 159 010e 9F91      		pop r25
+ 160 0110 8F91      		pop r24
+ 161 0112 5F91      		pop r21
+ 162 0114 4F91      		pop r20
+ 163 0116 3F91      		pop r19
+ 164 0118 2F91      		pop r18
+ 165 011a 0F90      		pop r0
+ 166 011c 0FBE      		out __SREG__,r0
+ 167 011e 0F90      		pop r0
+ 168 0120 1F90      		pop r1
+ 169 0122 1895      		reti
+ 170               		.size	__vector_21, .-__vector_21
+ 171               	.global	init_adc
+ 172               		.type	init_adc, @function
+ 173               	init_adc:
+ 174               	/* prologue: function */
+ 175               	/* frame size = 0 */
+ 176               	/* stack size = 0 */
+ 177               	.L__stack_usage = 0
+ 178 0124 80E4      		ldi r24,lo8(64)
+ 179 0126 8093 7C00 		sts 124,r24
+ 180 012a 8FEC      		ldi r24,lo8(-49)
+ 181 012c 8093 7A00 		sts 122,r24
+ 182 0130 0895      		ret
+ 183               		.size	init_adc, .-init_adc
+ 184               	.global	init_mcu_hardware
+ 185               		.type	init_mcu_hardware, @function
+ 186               	init_mcu_hardware:
+ 187               	/* prologue: function */
+ 188               	/* frame size = 0 */
+ 189               	/* stack size = 0 */
+ 190               	.L__stack_usage = 0
+ 191 0132 549A      		sbi 0xa,4
+ 192 0134 559A      		sbi 0xa,5
+ 193 0136 0E94 0000 		call init_adc
+ 194 013a 83E0      		ldi r24,lo8(3)
+ 195 013c 85BD      		out 0x25,r24
+ 196 013e 81E0      		ldi r24,lo8(1)
+ 197 0140 8093 6E00 		sts 110,r24
+ 198               	/* #APP */
+ 199               	 ;  57 "src/mcu.c" 1
+ 200 0144 7894      		sei
+ 201               	 ;  0 "" 2
+ 202               	/* #NOAPP */
+ 203 0146 0E94 0000 		call init_sound
+ 204 014a 0C94 0000 		jmp init_blink
+ 205               		.size	init_mcu_hardware, .-init_mcu_hardware
+ 206               	.global	t0_ovf_reload_500ms
+ 207               		.section	.rodata
+ 208               		.type	t0_ovf_reload_500ms, @object
+ 209               		.size	t0_ovf_reload_500ms, 1
+ 210               	t0_ovf_reload_500ms:
+ 211 0000 F4        		.byte	-12
+ 212               	.global	t0_ovf_reload_100ms
+ 213               		.type	t0_ovf_reload_100ms, @object
+ 214               		.size	t0_ovf_reload_100ms, 1
+ 215               	t0_ovf_reload_100ms:
+ 216 0001 30        		.byte	48
+ 217               	.global	t0_ovf_reload_20ms
+ 218               		.type	t0_ovf_reload_20ms, @object
+ 219               		.size	t0_ovf_reload_20ms, 1
+ 220               	t0_ovf_reload_20ms:
+ 221 0002 09        		.byte	9
+ 222               		.ident	"GCC: (GNU) 5.4.0"
+ 223               	.global __do_copy_data
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 mcu.c
+     /tmp/cc6sXCWd.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/cc6sXCWd.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/cc6sXCWd.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/cc6sXCWd.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/cc6sXCWd.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/cc6sXCWd.s:10     .text:0000000000000000 count_for_event
+     /tmp/cc6sXCWd.s:14     *ABS*:0000000000000000 .L__stack_usage
+     /tmp/cc6sXCWd.s:25     .text:0000000000000016 .L1
+     /tmp/cc6sXCWd.s:30     .text:0000000000000018 __vector_16
+     /tmp/cc6sXCWd.s:88     .text:0000000000000080 __vector_21
+     /tmp/cc6sXCWd.s:143    .text:00000000000000ea .L6
+     /tmp/cc6sXCWd.s:173    .text:0000000000000124 init_adc
+     /tmp/cc6sXCWd.s:186    .text:0000000000000132 init_mcu_hardware
+     /tmp/cc6sXCWd.s:210    .rodata:0000000000000000 t0_ovf_reload_500ms
+     /tmp/cc6sXCWd.s:215    .rodata:0000000000000001 t0_ovf_reload_100ms
+     /tmp/cc6sXCWd.s:220    .rodata:0000000000000002 t0_ovf_reload_20ms
+
+UNDEFINED SYMBOLS
+put_event
+state
+config
+init_sound
+init_blink
+__do_copy_data

@@ -1,0 +1,251 @@
+   1               		.file	"lcd.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.global	init_lcd
+   9               		.type	init_lcd, @function
+  10               	init_lcd:
+  11               	/* prologue: function */
+  12               	/* frame size = 0 */
+  13               	/* stack size = 0 */
+  14               	.L__stack_usage = 0
+  15 0000 0C94 0000 		jmp LCD_Init
+  16               		.size	init_lcd, .-init_lcd
+  17               	.global	lcd_demo
+  18               		.type	lcd_demo, @function
+  19               	lcd_demo:
+  20               	/* prologue: function */
+  21               	/* frame size = 0 */
+  22               	/* stack size = 0 */
+  23               	.L__stack_usage = 0
+  24 0004 8091 0000 		lds r24,lcd
+  25 0008 8295      		swap r24
+  26 000a 8770      		andi r24,lo8(7)
+  27 000c 0E94 0000 		call Bat
+  28 0010 9091 0000 		lds r25,lcd
+  29 0014 892F      		mov r24,r25
+  30 0016 8295      		swap r24
+  31 0018 8770      		andi r24,lo8(7)
+  32 001a 282F      		mov r18,r24
+  33 001c 30E0      		ldi r19,0
+  34 001e 9F78      		andi r25,lo8(-113)
+  35 0020 2530      		cpi r18,5
+  36 0022 3105      		cpc r19,__zero_reg__
+  37 0024 04F4      		brge .L3
+  38 0026 8F5F      		subi r24,lo8(-(1))
+  39 0028 8770      		andi r24,lo8(7)
+  40 002a 8295      		swap r24
+  41 002c 807F      		andi r24,lo8(-16)
+  42 002e 892B      		or r24,r25
+  43 0030 8093 0000 		sts lcd,r24
+  44 0034 00C0      		rjmp .L4
+  45               	.L3:
+  46 0036 9093 0000 		sts lcd,r25
+  47               	.L4:
+  48 003a 8091 0000 		lds r24,lcd
+  49 003e 8295      		swap r24
+  50 0040 807F      		andi r24,lo8(-16)
+  51 0042 8595      		asr r24
+  52 0044 8595      		asr r24
+  53 0046 8595      		asr r24
+  54 0048 8595      		asr r24
+  55 004a 0E94 0000 		call TrimThrottle
+  56 004e 8091 0000 		lds r24,lcd
+  57 0052 8295      		swap r24
+  58 0054 807F      		andi r24,lo8(-16)
+  59 0056 8595      		asr r24
+  60 0058 8595      		asr r24
+  61 005a 8595      		asr r24
+  62 005c 8595      		asr r24
+  63 005e 0E94 0000 		call TrimRudder
+  64 0062 8091 0000 		lds r24,lcd
+  65 0066 8295      		swap r24
+  66 0068 807F      		andi r24,lo8(-16)
+  67 006a 8595      		asr r24
+  68 006c 8595      		asr r24
+  69 006e 8595      		asr r24
+  70 0070 8595      		asr r24
+  71 0072 0E94 0000 		call TrimEler
+  72 0076 8091 0000 		lds r24,lcd
+  73 007a 8295      		swap r24
+  74 007c 807F      		andi r24,lo8(-16)
+  75 007e 8595      		asr r24
+  76 0080 8595      		asr r24
+  77 0082 8595      		asr r24
+  78 0084 8595      		asr r24
+  79 0086 0E94 0000 		call TrimElev
+  80 008a 9091 0000 		lds r25,lcd
+  81 008e 892F      		mov r24,r25
+  82 0090 8295      		swap r24
+  83 0092 807F      		andi r24,lo8(-16)
+  84 0094 8595      		asr r24
+  85 0096 8595      		asr r24
+  86 0098 8595      		asr r24
+  87 009a 8595      		asr r24
+  88 009c 907F      		andi r25,lo8(-16)
+  89 009e 8630      		cpi r24,lo8(6)
+  90 00a0 04F4      		brge .L5
+  91 00a2 8F5F      		subi r24,lo8(-(1))
+  92 00a4 8F70      		andi r24,lo8(15)
+  93 00a6 892B      		or r24,r25
+  94 00a8 00C0      		rjmp .L9
+  95               	.L5:
+  96 00aa 892F      		mov r24,r25
+  97 00ac 8B60      		ori r24,lo8(11)
+  98               	.L9:
+  99 00ae 8093 0000 		sts lcd,r24
+ 100 00b2 8091 0000 		lds r24,lcd
+ 101 00b6 87FB      		bst r24,7
+ 102 00b8 8827      		clr r24
+ 103 00ba 80F9      		bld r24,0
+ 104 00bc 0E94 0000 		call SetMode
+ 105 00c0 8091 0000 		lds r24,lcd
+ 106 00c4 87FB      		bst r24,7
+ 107 00c6 9927      		clr r25
+ 108 00c8 90F9      		bld r25,0
+ 109 00ca 9F5F      		subi r25,lo8(-(1))
+ 110 00cc 90FB      		bst r25,0
+ 111 00ce 87F9      		bld r24,7
+ 112 00d0 8093 0000 		sts lcd,r24
+ 113 00d4 9091 0000 		lds r25,lcd+1
+ 114 00d8 892F      		mov r24,r25
+ 115 00da 8170      		andi r24,1
+ 116 00dc 21E0      		ldi r18,lo8(1)
+ 117 00de 280F      		add r18,r24
+ 118 00e0 20FB      		bst r18,0
+ 119 00e2 90F9      		bld r25,0
+ 120 00e4 9093 0000 		sts lcd+1,r25
+ 121 00e8 0E94 0000 		call DoubleRate
+ 122 00ec 9091 0000 		lds r25,lcd+1
+ 123 00f0 91FB      		bst r25,1
+ 124 00f2 8827      		clr r24
+ 125 00f4 80F9      		bld r24,0
+ 126 00f6 21E0      		ldi r18,lo8(1)
+ 127 00f8 280F      		add r18,r24
+ 128 00fa 20FB      		bst r18,0
+ 129 00fc 91F9      		bld r25,1
+ 130 00fe 9093 0000 		sts lcd+1,r25
+ 131 0102 0E94 0000 		call Ant
+ 132 0106 9091 0000 		lds r25,lcd+1
+ 133 010a 892F      		mov r24,r25
+ 134 010c 8295      		swap r24
+ 135 010e 880F      		lsl r24
+ 136 0110 807E      		andi r24,lo8(-32)
+ 137 0112 880F      		lsl r24
+ 138 0114 880B      		sbc r24,r24
+ 139 0116 21E0      		ldi r18,lo8(1)
+ 140 0118 280F      		add r18,r24
+ 141 011a 20FB      		bst r18,0
+ 142 011c 92F9      		bld r25,2
+ 143 011e 9093 0000 		sts lcd+1,r25
+ 144 0122 0E94 0000 		call Quadro
+ 145 0126 2091 0000 		lds r18,state+24
+ 146 012a 3091 0000 		lds r19,state+24+1
+ 147 012e 4AE0      		ldi r20,lo8(10)
+ 148 0130 429F      		mul r20,r18
+ 149 0132 C001      		movw r24,r0
+ 150 0134 439F      		mul r20,r19
+ 151 0136 900D      		add r25,r0
+ 152 0138 1124      		clr __zero_reg__
+ 153 013a 97FF      		sbrs r25,7
+ 154 013c 00C0      		rjmp .L7
+ 155 013e 8150      		subi r24,1
+ 156 0140 9C4F      		sbci r25,-4
+ 157               	.L7:
+ 158 0142 892F      		mov r24,r25
+ 159 0144 8595      		asr r24
+ 160 0146 8595      		asr r24
+ 161 0148 8B5F      		subi r24,lo8(-(5))
+ 162 014a 0E94 0000 		call ThrotleLeft
+ 163 014e 2091 0000 		lds r18,state+20
+ 164 0152 3091 0000 		lds r19,state+20+1
+ 165 0156 4AE0      		ldi r20,lo8(10)
+ 166 0158 429F      		mul r20,r18
+ 167 015a C001      		movw r24,r0
+ 168 015c 439F      		mul r20,r19
+ 169 015e 900D      		add r25,r0
+ 170 0160 1124      		clr __zero_reg__
+ 171 0162 97FF      		sbrs r25,7
+ 172 0164 00C0      		rjmp .L8
+ 173 0166 8150      		subi r24,1
+ 174 0168 9C4F      		sbci r25,-4
+ 175               	.L8:
+ 176 016a 892F      		mov r24,r25
+ 177 016c 8595      		asr r24
+ 178 016e 8595      		asr r24
+ 179 0170 8B5F      		subi r24,lo8(-(5))
+ 180 0172 0E94 0000 		call ThrotleRight
+ 181 0176 8091 0000 		lds r24,lcd+2
+ 182 017a 880F      		lsl r24
+ 183 017c 8595      		asr r24
+ 184 017e 8595      		asr r24
+ 185 0180 8595      		asr r24
+ 186 0182 8595      		asr r24
+ 187 0184 0E94 0000 		call Rudder
+ 188 0188 8091 0000 		lds r24,lcd+2
+ 189 018c 982F      		mov r25,r24
+ 190 018e 990F      		lsl r25
+ 191 0190 9295      		swap r25
+ 192 0192 9F70      		andi r25,lo8(15)
+ 193 0194 9F5F      		subi r25,lo8(-(1))
+ 194 0196 9F70      		andi r25,lo8(15)
+ 195 0198 990F      		lsl r25
+ 196 019a 990F      		lsl r25
+ 197 019c 990F      		lsl r25
+ 198 019e 8778      		andi r24,lo8(-121)
+ 199 01a0 892B      		or r24,r25
+ 200 01a2 8093 0000 		sts lcd+2,r24
+ 201 01a6 0895      		ret
+ 202               		.size	lcd_demo, .-lcd_demo
+ 203               	.global	update_lcd
+ 204               		.type	update_lcd, @function
+ 205               	update_lcd:
+ 206               	/* prologue: function */
+ 207               	/* frame size = 0 */
+ 208               	/* stack size = 0 */
+ 209               	.L__stack_usage = 0
+ 210 01a8 0E94 0000 		call lcd_demo
+ 211 01ac 0C94 0000 		jmp LCD_Update
+ 212               		.size	update_lcd, .-update_lcd
+ 213               		.comm	lcd,3,1
+ 214               		.ident	"GCC: (GNU) 5.4.0"
+ 215               	.global __do_clear_bss
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lcd.c
+     /tmp/ccZyoWXU.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccZyoWXU.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccZyoWXU.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccZyoWXU.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccZyoWXU.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccZyoWXU.s:10     .text:0000000000000000 init_lcd
+     /tmp/ccZyoWXU.s:14     *ABS*:0000000000000000 .L__stack_usage
+     /tmp/ccZyoWXU.s:19     .text:0000000000000004 lcd_demo
+                            *COM*:0000000000000003 lcd
+     /tmp/ccZyoWXU.s:45     .text:0000000000000036 .L3
+     /tmp/ccZyoWXU.s:47     .text:000000000000003a .L4
+     /tmp/ccZyoWXU.s:95     .text:00000000000000aa .L5
+     /tmp/ccZyoWXU.s:98     .text:00000000000000ae .L9
+     /tmp/ccZyoWXU.s:157    .text:0000000000000142 .L7
+     /tmp/ccZyoWXU.s:175    .text:000000000000016a .L8
+     /tmp/ccZyoWXU.s:205    .text:00000000000001a8 update_lcd
+
+UNDEFINED SYMBOLS
+LCD_Init
+Bat
+TrimThrottle
+TrimRudder
+TrimEler
+TrimElev
+SetMode
+DoubleRate
+Ant
+Quadro
+state
+ThrotleLeft
+ThrotleRight
+Rudder
+LCD_Update
+__do_clear_bss
