@@ -16,6 +16,7 @@
 #include <Si446x.h>
 #include "state.h"
 #include "model_config.h"
+#include "packets.h"
 
 #define CHANNEL 20
 #define MAX_PACKET_SIZE 10
@@ -27,12 +28,6 @@
 
 typedef struct{
 	uint16_t ch[4];
-	uint8_t flags1;
-	uint8_t flags2;
-} rxBufferStruct_t;
-
-typedef struct{
-	uint16_t ch[4];
 	int16_t rssi;
 } responseBufferStruct_t;
 
@@ -41,13 +36,35 @@ typedef struct{
 	uint32_t timestamp;
 	int16_t rssi;
 	uint8_t length;
-	rxBufferStruct_t send_buffer;
+	uint8_t packet_counter;
+	stickPacketStruct_t stick_packet;
+	switchPacketStruct_t switch_packet;
 	responseBufferStruct_t response_buffer;
 } radio_state_t;
 
 static volatile radio_state_t radio_state;
 static volatile DEVICE_STATE state;
 static STORED_CONFIG config;
+
+void send_packet(){
+  radio_state.stick_packet.ch1 = state.matrix[3];
+  radio_state.stick_packet.ch2 = state.matrix[2];
+  radio_state.stick_packet.ch3 = state.matrix[1];
+
+  radio_state.stick_packet.ch4++;
+
+  radio_state.packet_counter++;
+  if(radio_state.packet_counter>7){
+    radio_state.packet_counter=0;
+  }
+
+  switch(radio_state.packet_counter){
+    case 0:
+    	Si446x_TX(&radio_state.switch_packet, sizeof(radio_state.switch_packet), CHANNEL, SI446X_STATE_RX);
+    default:
+      Si446x_TX(&radio_state.stick_packet, sizeof(radio_state.stick_packet), CHANNEL, SI446X_STATE_RX);
+  }
+}
 
 void SI446X_CB_RXCOMPLETE(uint8_t length, int16_t rssi)
 {
@@ -112,14 +129,6 @@ void setup()
 	memset(&radio_state, 0, sizeof(radio_state));
 }
 
-void make_send_packet(){
-  radio_state.send_buffer.ch[0] = state.matrix[3] + 1024;
-  radio_state.send_buffer.ch[1] = state.matrix[2] + 1024;
-  radio_state.send_buffer.ch[2] = state.matrix[1] + 1024;
-
-  radio_state.send_buffer.ch[3]++;
-}
-
 void loop()
 {
 	static uint8_t counter;
@@ -133,9 +142,8 @@ void loop()
 	
 	uint32_t startTime = millis();
 
-  make_send_packet();
+  send_packet();
 	// Send the data
-	Si446x_TX(&radio_state.send_buffer, sizeof(radio_state.send_buffer), CHANNEL, SI446X_STATE_RX);
 	sent++;
 	
 //	Serial.println(F("Data sent, waiting for reply..."));
@@ -187,13 +195,13 @@ void loop()
 		Serial.print(F("] len:["));
 		Serial.print(radio_state.length);
 		Serial.print(F("] ch0:["));
-		Serial.print(radio_state.send_buffer.ch[0]);
+		Serial.print(radio_state.stick_packet.ch1);
 		Serial.print(F("] ch1:["));
-		Serial.print(radio_state.send_buffer.ch[1]);
+		Serial.print(radio_state.stick_packet.ch2);
 		Serial.print(F("] ch2:["));
-		Serial.print(radio_state.send_buffer.ch[2]);
+		Serial.print(radio_state.stick_packet.ch3);
 		Serial.print(F("] ch3:["));
-		Serial.print(radio_state.send_buffer.ch[3]);
+		Serial.print(radio_state.stick_packet.ch4);
 		Serial.print(F("] a0:["));
 		Serial.print(state.matrix[0]);
 		Serial.print(F("] a1:["));

@@ -13,6 +13,7 @@
  */
 
 #include <Si446x.h>
+#include "packets.h"
 
 #define CHANNEL 20
 #define MAX_PACKET_SIZE 10
@@ -20,12 +21,6 @@
 #define PACKET_NONE		0
 #define PACKET_OK		1
 #define PACKET_INVALID	2
-
-typedef struct{
-	uint16_t ch[4];
-	uint8_t flags1;
-	uint8_t flags2;
-} rxBufferStruct_t;
 
 typedef struct{
 	uint16_t ch[4];
@@ -37,7 +32,8 @@ typedef struct{
 	uint32_t timestamp;
 	int16_t rssi;
 	uint8_t length;
-	rxBufferStruct_t rx_buffer;
+	stickPacketStruct_t stick_packet;
+	switchPacketStruct_t switch_packet;
 	responseBufferStruct_t response_buffer;
 } pingInfo_t;
 
@@ -54,7 +50,14 @@ void SI446X_CB_RXCOMPLETE(uint8_t length, int16_t rssi)
 
   pingInfo.response_buffer.rssi = rssi;
 
-	Si446x_read(&pingInfo.rx_buffer, length);
+  switch(length){
+    case STICK_PACK_SIZE:
+    	Si446x_read(&pingInfo.stick_packet, length);
+      break;
+    case SWITCH_PACK_SIZE:
+    	Si446x_read(&pingInfo.switch_packet, length);
+      break;
+  }
   Si446x_TX(&pingInfo.response_buffer, sizeof(pingInfo.response_buffer), CHANNEL, SI446X_STATE_RX);
 }
 
@@ -115,21 +118,20 @@ void loop()
 		digitalWrite(A5, ledState ? HIGH : LOW);
 		ledState = !ledState;
 
-    Serial.print(F("Totals: "));
     Serial.print(pings);
 
-		Serial.print(F(" rssi: "));
+		Serial.print(F(" rssi:["));
 		Serial.print(pingInfo.rssi);
-		Serial.print(F("dBm length:["));
+		Serial.print(F("] length:["));
 		Serial.print(pingInfo.length);
 		Serial.print(F("] ch0:["));
-		Serial.print(pingInfo.rx_buffer.ch[0]);
+		Serial.print(pingInfo.stick_packet.ch1);
 		Serial.print(F("] ch1:["));
-		Serial.print(pingInfo.rx_buffer.ch[1]);
+		Serial.print(pingInfo.stick_packet.ch2);
 		Serial.print(F("] ch2:["));
-		Serial.print(pingInfo.rx_buffer.ch[2]);
+		Serial.print(pingInfo.stick_packet.ch3);
 		Serial.print(F("] ch3:["));
-		Serial.print(pingInfo.rx_buffer.ch[3]);
+		Serial.print(pingInfo.stick_packet.ch4);
 		Serial.println(F("]"));
 	}
 
