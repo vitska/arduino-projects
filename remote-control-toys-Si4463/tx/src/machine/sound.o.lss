@@ -123,17 +123,17 @@
  123               		.ident	"GCC: (GNU) 5.4.0"
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 sound.c
-     /tmp/ccfS91LP.s:2      *ABS*:000000000000003e __SP_H__
-     /tmp/ccfS91LP.s:3      *ABS*:000000000000003d __SP_L__
-     /tmp/ccfS91LP.s:4      *ABS*:000000000000003f __SREG__
-     /tmp/ccfS91LP.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/ccfS91LP.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/ccfS91LP.s:10     .text:0000000000000000 __vector_14
-     /tmp/ccfS91LP.s:31     *ABS*:0000000000000000 .L__stack_usage
-     /tmp/ccfS91LP.s:55     .text:0000000000000060 .L1
-     /tmp/ccfS91LP.s:77     .text:0000000000000082 init_sound
-     /tmp/ccfS91LP.s:86     .text:0000000000000084 sound
-     /tmp/ccfS91LP.s:110    .text:00000000000000a8 sound_off
+     /tmp/ccH2JVYS.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccH2JVYS.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccH2JVYS.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccH2JVYS.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccH2JVYS.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccH2JVYS.s:10     .text:0000000000000000 __vector_14
+     /tmp/ccH2JVYS.s:31     *ABS*:0000000000000000 .L__stack_usage
+     /tmp/ccH2JVYS.s:55     .text:0000000000000060 .L1
+     /tmp/ccH2JVYS.s:77     .text:0000000000000082 init_sound
+     /tmp/ccH2JVYS.s:86     .text:0000000000000084 sound
+     /tmp/ccH2JVYS.s:110    .text:00000000000000a8 sound_off
 
 UNDEFINED SYMBOLS
 state

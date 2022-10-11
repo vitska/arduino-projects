@@ -223,22 +223,22 @@
  223               	.global __do_copy_data
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 mcu.c
-     /tmp/cc6sXCWd.s:2      *ABS*:000000000000003e __SP_H__
-     /tmp/cc6sXCWd.s:3      *ABS*:000000000000003d __SP_L__
-     /tmp/cc6sXCWd.s:4      *ABS*:000000000000003f __SREG__
-     /tmp/cc6sXCWd.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/cc6sXCWd.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/cc6sXCWd.s:10     .text:0000000000000000 count_for_event
-     /tmp/cc6sXCWd.s:14     *ABS*:0000000000000000 .L__stack_usage
-     /tmp/cc6sXCWd.s:25     .text:0000000000000016 .L1
-     /tmp/cc6sXCWd.s:30     .text:0000000000000018 __vector_16
-     /tmp/cc6sXCWd.s:88     .text:0000000000000080 __vector_21
-     /tmp/cc6sXCWd.s:143    .text:00000000000000ea .L6
-     /tmp/cc6sXCWd.s:173    .text:0000000000000124 init_adc
-     /tmp/cc6sXCWd.s:186    .text:0000000000000132 init_mcu_hardware
-     /tmp/cc6sXCWd.s:210    .rodata:0000000000000000 t0_ovf_reload_500ms
-     /tmp/cc6sXCWd.s:215    .rodata:0000000000000001 t0_ovf_reload_100ms
-     /tmp/cc6sXCWd.s:220    .rodata:0000000000000002 t0_ovf_reload_20ms
+     /tmp/ccMBhElf.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccMBhElf.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccMBhElf.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccMBhElf.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccMBhElf.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccMBhElf.s:10     .text:0000000000000000 count_for_event
+     /tmp/ccMBhElf.s:14     *ABS*:0000000000000000 .L__stack_usage
+     /tmp/ccMBhElf.s:25     .text:0000000000000016 .L1
+     /tmp/ccMBhElf.s:30     .text:0000000000000018 __vector_16
+     /tmp/ccMBhElf.s:88     .text:0000000000000080 __vector_21
+     /tmp/ccMBhElf.s:143    .text:00000000000000ea .L6
+     /tmp/ccMBhElf.s:173    .text:0000000000000124 init_adc
+     /tmp/ccMBhElf.s:186    .text:0000000000000132 init_mcu_hardware
+     /tmp/ccMBhElf.s:210    .rodata:0000000000000000 t0_ovf_reload_500ms
+     /tmp/ccMBhElf.s:215    .rodata:0000000000000001 t0_ovf_reload_100ms
+     /tmp/ccMBhElf.s:220    .rodata:0000000000000002 t0_ovf_reload_20ms
 
 UNDEFINED SYMBOLS
 put_event

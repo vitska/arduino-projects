@@ -30,56 +30,54 @@
   30               	/* #NOAPP */
   31 0016 0E94 0000 		call init_state
   32 001a 0E94 0000 		call init_lcd
-  33 001e 0E94 0000 		call init_mcu_hardware
-  34 0022 0C94 0000 		jmp init_serial
-  35               		.size	setup, .-setup
-  36               	.global	loop
-  37               		.type	loop, @function
-  38               	loop:
-  39               	/* prologue: function */
-  40               	/* frame size = 0 */
-  41               	/* stack size = 0 */
-  42               	.L__stack_usage = 0
-  43 0026 0E94 0000 		call wait_event
-  44 002a 0E94 0000 		call controller
-  45               	/* #APP */
-  46               	 ;  47 "main.c" 1
-  47 002e A895      		wdr
-  48               	 ;  0 "" 2
-  49               	/* #NOAPP */
-  50 0030 0895      		ret
-  51               		.size	loop, .-loop
-  52               		.section	.text.startup,"ax",@progbits
-  53               	.global	main
-  54               		.type	main, @function
-  55               	main:
-  56               	/* prologue: function */
-  57               	/* frame size = 0 */
-  58               	/* stack size = 0 */
-  59               	.L__stack_usage = 0
-  60 0000 0E94 0000 		call setup
-  61               	.L4:
-  62 0004 0E94 0000 		call loop
-  63 0008 00C0      		rjmp .L4
-  64               		.size	main, .-main
-  65               		.ident	"GCC: (GNU) 5.4.0"
+  33 001e 0C94 0000 		jmp init_mcu_hardware
+  34               		.size	setup, .-setup
+  35               	.global	loop
+  36               		.type	loop, @function
+  37               	loop:
+  38               	/* prologue: function */
+  39               	/* frame size = 0 */
+  40               	/* stack size = 0 */
+  41               	.L__stack_usage = 0
+  42 0022 0E94 0000 		call wait_event
+  43 0026 0E94 0000 		call controller
+  44               	/* #APP */
+  45               	 ;  47 "main.c" 1
+  46 002a A895      		wdr
+  47               	 ;  0 "" 2
+  48               	/* #NOAPP */
+  49 002c 0895      		ret
+  50               		.size	loop, .-loop
+  51               		.section	.text.startup,"ax",@progbits
+  52               	.global	main
+  53               		.type	main, @function
+  54               	main:
+  55               	/* prologue: function */
+  56               	/* frame size = 0 */
+  57               	/* stack size = 0 */
+  58               	.L__stack_usage = 0
+  59 0000 0E94 0000 		call setup
+  60               	.L4:
+  61 0004 0E94 0000 		call loop
+  62 0008 00C0      		rjmp .L4
+  63               		.size	main, .-main
+  64               		.ident	"GCC: (GNU) 5.4.0"
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 main.c
-     /tmp/ccSUq5cM.s:2      *ABS*:000000000000003e __SP_H__
-     /tmp/ccSUq5cM.s:3      *ABS*:000000000000003d __SP_L__
-     /tmp/ccSUq5cM.s:4      *ABS*:000000000000003f __SREG__
-     /tmp/ccSUq5cM.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/ccSUq5cM.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/ccSUq5cM.s:10     .text:0000000000000000 setup
-     /tmp/ccSUq5cM.s:14     *ABS*:0000000000000000 .L__stack_usage
-     /tmp/ccSUq5cM.s:38     .text:0000000000000026 loop
-     /tmp/ccSUq5cM.s:55     .text.startup:0000000000000000 main
-     /tmp/ccSUq5cM.s:61     .text.startup:0000000000000004 .L4
+     /tmp/ccVpo8AI.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccVpo8AI.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccVpo8AI.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccVpo8AI.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccVpo8AI.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccVpo8AI.s:10     .text:0000000000000000 setup
+     /tmp/ccVpo8AI.s:14     *ABS*:0000000000000000 .L__stack_usage
+     /tmp/ccVpo8AI.s:37     .text:0000000000000022 loop
+     /tmp/ccVpo8AI.s:54     .text.startup:0000000000000000 main
+     /tmp/ccVpo8AI.s:60     .text.startup:0000000000000004 .L4
 
 UNDEFINED SYMBOLS
 init_state
 init_lcd
 init_mcu_hardware
-init_serial
 wait_event
 controller

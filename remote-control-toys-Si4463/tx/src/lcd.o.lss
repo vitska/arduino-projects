@@ -215,22 +215,22 @@
  215               	.global __do_clear_bss
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 lcd.c
-     /tmp/ccZyoWXU.s:2      *ABS*:000000000000003e __SP_H__
-     /tmp/ccZyoWXU.s:3      *ABS*:000000000000003d __SP_L__
-     /tmp/ccZyoWXU.s:4      *ABS*:000000000000003f __SREG__
-     /tmp/ccZyoWXU.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/ccZyoWXU.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/ccZyoWXU.s:10     .text:0000000000000000 init_lcd
-     /tmp/ccZyoWXU.s:14     *ABS*:0000000000000000 .L__stack_usage
-     /tmp/ccZyoWXU.s:19     .text:0000000000000004 lcd_demo
+     /tmp/ccO1NmYT.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccO1NmYT.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccO1NmYT.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccO1NmYT.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccO1NmYT.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccO1NmYT.s:10     .text:0000000000000000 init_lcd
+     /tmp/ccO1NmYT.s:14     *ABS*:0000000000000000 .L__stack_usage
+     /tmp/ccO1NmYT.s:19     .text:0000000000000004 lcd_demo
                             *COM*:0000000000000003 lcd
-     /tmp/ccZyoWXU.s:45     .text:0000000000000036 .L3
-     /tmp/ccZyoWXU.s:47     .text:000000000000003a .L4
-     /tmp/ccZyoWXU.s:95     .text:00000000000000aa .L5
-     /tmp/ccZyoWXU.s:98     .text:00000000000000ae .L9
-     /tmp/ccZyoWXU.s:157    .text:0000000000000142 .L7
-     /tmp/ccZyoWXU.s:175    .text:000000000000016a .L8
-     /tmp/ccZyoWXU.s:205    .text:00000000000001a8 update_lcd
+     /tmp/ccO1NmYT.s:45     .text:0000000000000036 .L3
+     /tmp/ccO1NmYT.s:47     .text:000000000000003a .L4
+     /tmp/ccO1NmYT.s:95     .text:00000000000000aa .L5
+     /tmp/ccO1NmYT.s:98     .text:00000000000000ae .L9
+     /tmp/ccO1NmYT.s:157    .text:0000000000000142 .L7
+     /tmp/ccO1NmYT.s:175    .text:000000000000016a .L8
+     /tmp/ccO1NmYT.s:205    .text:00000000000001a8 update_lcd
 
 UNDEFINED SYMBOLS
 LCD_Init

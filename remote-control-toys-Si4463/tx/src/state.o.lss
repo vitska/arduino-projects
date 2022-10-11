@@ -89,20 +89,20 @@
   89               	.global __do_clear_bss
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 state.c
-     /tmp/ccmre1t7.s:2      *ABS*:000000000000003e __SP_H__
-     /tmp/ccmre1t7.s:3      *ABS*:000000000000003d __SP_L__
-     /tmp/ccmre1t7.s:4      *ABS*:000000000000003f __SREG__
-     /tmp/ccmre1t7.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/ccmre1t7.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/ccmre1t7.s:10     .text:0000000000000000 put_event
-     /tmp/ccmre1t7.s:14     *ABS*:0000000000000000 .L__stack_usage
+     /tmp/ccCAJHhc.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccCAJHhc.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccCAJHhc.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccCAJHhc.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccCAJHhc.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccCAJHhc.s:10     .text:0000000000000000 put_event
+     /tmp/ccCAJHhc.s:14     *ABS*:0000000000000000 .L__stack_usage
                             *COM*:00000000000001a6 state
-     /tmp/ccmre1t7.s:27     .text:0000000000000020 .L2
-     /tmp/ccmre1t7.s:35     .text:0000000000000036 .L1
-     /tmp/ccmre1t7.s:40     .text:0000000000000038 init_state
-     /tmp/ccmre1t7.s:61     .text:0000000000000052 wait_event
-     /tmp/ccmre1t7.s:66     .text:0000000000000052 .L7
-     /tmp/ccmre1t7.s:83     .text:000000000000007e .L8
+     /tmp/ccCAJHhc.s:27     .text:0000000000000020 .L2
+     /tmp/ccCAJHhc.s:35     .text:0000000000000036 .L1
+     /tmp/ccCAJHhc.s:40     .text:0000000000000038 init_state
+     /tmp/ccCAJHhc.s:61     .text:0000000000000052 wait_event
+     /tmp/ccCAJHhc.s:66     .text:0000000000000052 .L7
+     /tmp/ccCAJHhc.s:83     .text:000000000000007e .L8
                             *COM*:0000000000000200 config
 
 UNDEFINED SYMBOLS

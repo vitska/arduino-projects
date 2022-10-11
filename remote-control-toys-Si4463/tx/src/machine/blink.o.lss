@@ -155,17 +155,17 @@
  155               		.ident	"GCC: (GNU) 5.4.0"
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 blink.c
-     /tmp/ccalOhrx.s:2      *ABS*:000000000000003e __SP_H__
-     /tmp/ccalOhrx.s:3      *ABS*:000000000000003d __SP_L__
-     /tmp/ccalOhrx.s:4      *ABS*:000000000000003f __SREG__
-     /tmp/ccalOhrx.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/ccalOhrx.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/ccalOhrx.s:10     .text:0000000000000000 blink_step
-     /tmp/ccalOhrx.s:14     *ABS*:0000000000000000 .L__stack_usage
-     /tmp/ccalOhrx.s:107    .text:00000000000000b6 .L1
-     /tmp/ccalOhrx.s:76     .text:000000000000007a .L4
-     /tmp/ccalOhrx.s:112    .text:00000000000000b8 blink
-     /tmp/ccalOhrx.s:144    .text:00000000000000e8 init_blink
+     /tmp/cc1Fe9iA.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/cc1Fe9iA.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/cc1Fe9iA.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/cc1Fe9iA.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/cc1Fe9iA.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/cc1Fe9iA.s:10     .text:0000000000000000 blink_step
+     /tmp/cc1Fe9iA.s:14     *ABS*:0000000000000000 .L__stack_usage
+     /tmp/cc1Fe9iA.s:107    .text:00000000000000b6 .L1
+     /tmp/cc1Fe9iA.s:76     .text:000000000000007a .L4
+     /tmp/cc1Fe9iA.s:112    .text:00000000000000b8 blink
+     /tmp/cc1Fe9iA.s:144    .text:00000000000000e8 init_blink
 
 UNDEFINED SYMBOLS
 state

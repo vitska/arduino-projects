@@ -6,7 +6,7 @@
 void controller(uint8_t event){
   switch(event){
     case EV_STARTUP:
-      serial_write_block((void*)&state.matrix, sizeof(state.matrix), 'A');
+//      serial_write_block((void*)&state.matrix, sizeof(state.matrix), 'A');
       break;
 
     case EV_CLOCK_500MS:

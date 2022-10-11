@@ -7,12 +7,12 @@ void setup() {
   wdt_enable(WDTO_2S);
   wdt_reset();
 //  Serial.begin(9600*2); // The baudrate of Serial monitor is set in 9600
-  // initialize digital pin LED_BUILTIN as an output.
+//  initialize digital pin LED_BUILTIN as an output.
 //  pinMode(4, OUTPUT);
   init_state();
   init_lcd();
   init_mcu_hardware(); // Init continuous MCU ADC scan
-  init_serial();
+//  init_serial();
 //  scan_i2c();
 //  tone(5, 5000, 100);
 }
