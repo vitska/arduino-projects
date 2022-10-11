@@ -14,33 +14,18 @@
  */
 
 #include <Si446x.h>
+#include <SPI.h>
 #include "state.h"
 #include "model_config.h"
-#include "packets.h"
+#include "radio_state.h"
 
 #define CHANNEL 20
 #define MAX_PACKET_SIZE 10
-#define TIMEOUT 50
+#define TIMEOUT 10
 
 #define PACKET_NONE		0
 #define PACKET_OK		1
 #define PACKET_INVALID	2
-
-typedef struct{
-	uint16_t ch[4];
-	int16_t rssi;
-} responseBufferStruct_t;
-
-typedef struct{
-	uint8_t ready;
-	uint32_t timestamp;
-	int16_t rssi;
-	uint8_t length;
-	uint8_t packet_counter;
-	stickPacketStruct_t stick_packet;
-	switchPacketStruct_t switch_packet;
-	responseBufferStruct_t response_buffer;
-} radio_state_t;
 
 static volatile radio_state_t radio_state;
 static volatile DEVICE_STATE state;
@@ -50,8 +35,7 @@ void send_packet(){
   radio_state.stick_packet.ch1 = state.matrix[3];
   radio_state.stick_packet.ch2 = state.matrix[2];
   radio_state.stick_packet.ch3 = state.matrix[1];
-
-  radio_state.stick_packet.ch4++;
+  radio_state.stick_packet.ch4 = state.matrix[0];
 
   radio_state.packet_counter++;
   if(radio_state.packet_counter>7){
@@ -114,6 +98,10 @@ void init_adc()
 
 void setup()
 {
+	memset(&radio_state, 0, sizeof(radio_state));
+  memset(&config, 0, sizeof(config));
+  memset(&state, 0, sizeof(state));
+
 	Serial.begin(500000);
 
 	pinMode(LED_PIN, OUTPUT); // LED
@@ -123,10 +111,9 @@ void setup()
 
 	// Start up
 	Si446x_init();
+  SPI.setClockDivider(SPI_CLOCK_DIV2);
 //	Si446x_setTxPower(0); // -32dBm (<1uW)
 	Si446x_setTxPower(7); // 0dBm (1mW)
-
-	memset(&radio_state, 0, sizeof(radio_state));
 }
 
 void loop()
@@ -190,26 +177,26 @@ void loop()
 		Serial.print(totalTime);
 		Serial.print(F("] rssi:["));
 		Serial.print(radio_state.rssi);
-		Serial.print(F("] response_rssi:["));
+		Serial.print(F(":"));
 		Serial.print(radio_state.response_buffer.rssi);
-		Serial.print(F("] len:["));
-		Serial.print(radio_state.length);
-		Serial.print(F("] ch0:["));
-		Serial.print(radio_state.stick_packet.ch1);
-		Serial.print(F("] ch1:["));
-		Serial.print(radio_state.stick_packet.ch2);
-		Serial.print(F("] ch2:["));
-		Serial.print(radio_state.stick_packet.ch3);
-		Serial.print(F("] ch3:["));
-		Serial.print(radio_state.stick_packet.ch4);
-		Serial.print(F("] a0:["));
-		Serial.print(state.matrix[0]);
-		Serial.print(F("] a1:["));
-		Serial.print(state.matrix[1]);
-		Serial.print(F("] a2:["));
-		Serial.print(state.matrix[2]);
-		Serial.print(F("] a3:["));
-		Serial.print(state.matrix[3]);
+		// Serial.print(F("] len:["));
+		// Serial.print(radio_state.length);
+		// Serial.print(F("] ch0:["));
+		// Serial.print(radio_state.stick_packet.ch1);
+		// Serial.print(F("] ch1:["));
+		// Serial.print(radio_state.stick_packet.ch2);
+		// Serial.print(F("] ch2:["));
+		// Serial.print(radio_state.stick_packet.ch3);
+		// Serial.print(F("] ch3:["));
+		// Serial.print(radio_state.stick_packet.ch4);
+		// Serial.print(F("] a0:["));
+		// Serial.print(state.matrix[0]);
+		// Serial.print(F("] a1:["));
+		// Serial.print(state.matrix[1]);
+		// Serial.print(F("] a2:["));
+		// Serial.print(state.matrix[2]);
+		// Serial.print(F("] a3:["));
+		// Serial.print(state.matrix[3]);
 		Serial.println(F("]"));
 
     

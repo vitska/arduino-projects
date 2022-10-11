@@ -19,7 +19,7 @@ typedef struct tag_DEVICE_CONFIG
   uint16_t ac_cal_max[6];   //27 //12
   int16_t  bat_adc_const;   //39
   int16_t  uart_baud_const; //41
-  uint8_t  filler[256-43];  //43
+//  uint8_t  filler[256-43];  //43
 }DEVICE_CONFIG;
 
 typedef struct tag_SWVAL{
@@ -58,7 +58,7 @@ typedef struct tag_MODEL_CONFIG{
   MUXDEF    mix[6];     //143 //30
   char      model_name[12];  //173 //12
   uint16_t  adc_test;    //185 //2   //8x2 bits
-  uint8_t   filler[69];   //187 //69
+//  uint8_t   filler[69];   //187 //69
                 //256
 }MODEL_CONFIG; //256
 

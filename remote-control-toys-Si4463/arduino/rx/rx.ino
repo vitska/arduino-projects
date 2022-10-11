@@ -13,6 +13,7 @@
  */
 
 #include <Si446x.h>
+#include <SPI.h>
 #include "packets.h"
 
 #define CHANNEL 20
@@ -23,7 +24,6 @@
 #define PACKET_INVALID	2
 
 typedef struct{
-	uint16_t ch[4];
 	int16_t rssi;
 } responseBufferStruct_t;
 
@@ -76,6 +76,7 @@ void setup()
 
 	// Start up
 	Si446x_init();
+  SPI.setClockDivider(SPI_CLOCK_DIV2);
 //	Si446x_setTxPower(SI446X_MAX_TX_POWER);
 //	Si446x_setTxPower(0); // -32dBm (<1uW)
 	Si446x_setTxPower(7); // 0dBm (1mW)
@@ -114,9 +115,9 @@ void loop()
 		// Serial.println(F("Reply sent"));
 
 		// Toggle LED
-		static uint8_t ledState;
-		digitalWrite(A5, ledState ? HIGH : LOW);
-		ledState = !ledState;
+		// static uint8_t ledState;
+		// digitalWrite(A5, ledState ? HIGH : LOW);
+		// ledState = !ledState;
 
     Serial.print(pings);
 
