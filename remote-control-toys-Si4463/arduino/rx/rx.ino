@@ -14,6 +14,8 @@
 
 #include <Si446x.h>
 #include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_PWMServoDriver.h>
 #include "packets.h"
 
 #define CHANNEL 20
@@ -68,11 +70,20 @@ void SI446X_CB_RXINVALID(int16_t rssi)
   Si446x_RX(CHANNEL);
 }
 
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+
 void setup()
 {
 	Serial.begin(500000);
 
 	pinMode(A5, OUTPUT); // LED
+
+  pwm.begin();
+  pwm.setPWMFreq(1000);  // Analog servos run at ~60 Hz updates
+  pwm.setPWM(0, 0, 0 );
+  pwm.setPWM(1, 0, 0 );
+  pwm.setPWM(2, 0, 0 );
+  pwm.setPWM(3, 0, 0 );
 
 	// Start up
 	Si446x_init();
@@ -82,6 +93,30 @@ void setup()
 	Si446x_setTxPower(7); // 0dBm (1mW)
 
 	Serial.println(F("Waiting for ping..."));
+}
+
+void motor1(int value){
+  if(value > 1023) value = 1023;
+  if(value < -1023) value = -1023;
+  if(value < 0){
+    pwm.setPWM(0, 0, 0 );
+    pwm.setPWM(1, 0, value * -4 );
+  } else {
+    pwm.setPWM(0, 0, value * 4 );
+    pwm.setPWM(1, 0, 0 );
+  }
+}
+
+void motor2(int value){
+  if(value > 1023) value = 1023;
+  if(value < -1023) value = -1023;
+  if(value < 0){
+    pwm.setPWM(2, 0, 0 );
+    pwm.setPWM(3, 0, value * -4 );
+  } else {
+    pwm.setPWM(2, 0, value * 4 );
+    pwm.setPWM(3, 0, 0 );
+  }
 }
 
 void loop()
@@ -120,20 +155,22 @@ void loop()
 		// ledState = !ledState;
 
     Serial.print(pings);
-
 		Serial.print(F(" rssi:["));
 		Serial.print(pingInfo.rssi);
-		Serial.print(F("] length:["));
-		Serial.print(pingInfo.length);
-		Serial.print(F("] ch0:["));
-		Serial.print(pingInfo.stick_packet.ch1);
-		Serial.print(F("] ch1:["));
-		Serial.print(pingInfo.stick_packet.ch2);
-		Serial.print(F("] ch2:["));
-		Serial.print(pingInfo.stick_packet.ch3);
-		Serial.print(F("] ch3:["));
-		Serial.print(pingInfo.stick_packet.ch4);
+		// Serial.print(F("] length:["));
+		// Serial.print(pingInfo.length);
+		// Serial.print(F("] ch0:["));
+		// Serial.print(pingInfo.stick_packet.ch1);
+		// Serial.print(F("] ch1:["));
+		// Serial.print(pingInfo.stick_packet.ch2);
+		// Serial.print(F("] ch2:["));
+		// Serial.print(pingInfo.stick_packet.ch3);
+		// Serial.print(F("] ch3:["));
+		// Serial.print(pingInfo.stick_packet.ch4);
 		Serial.println(F("]"));
+
+    motor1(pingInfo.stick_packet.ch1 - pingInfo.stick_packet.ch4);
+    motor2(pingInfo.stick_packet.ch1 + pingInfo.stick_packet.ch4);
 	}
 
 	// Serial.print(F("Pings, "));
