@@ -20,6 +20,7 @@
 
 #define CHANNEL 20
 #define MAX_PACKET_SIZE 10
+#define TIMEOUT 50
 
 #define PACKET_NONE		0
 #define PACKET_OK		1
@@ -39,34 +40,34 @@ typedef struct{
 	responseBufferStruct_t response_buffer;
 } pingInfo_t;
 
-static volatile pingInfo_t pingInfo;
+static volatile pingInfo_t radio_state;
 
 void SI446X_CB_RXCOMPLETE(uint8_t length, int16_t rssi)
 {
 	if(length > MAX_PACKET_SIZE)
 		length = MAX_PACKET_SIZE;
 
-	pingInfo.ready = PACKET_OK;
-	pingInfo.rssi = rssi;
-	pingInfo.length = length;
+	radio_state.ready = PACKET_OK;
+	radio_state.rssi = rssi;
+	radio_state.length = length;
 
-  pingInfo.response_buffer.rssi = rssi;
+  radio_state.response_buffer.rssi = rssi;
 
   switch(length){
     case STICK_PACK_SIZE:
-    	Si446x_read(&pingInfo.stick_packet, length);
+    	Si446x_read(&radio_state.stick_packet, length);
       break;
     case SWITCH_PACK_SIZE:
-    	Si446x_read(&pingInfo.switch_packet, length);
+    	Si446x_read(&radio_state.switch_packet, length);
       break;
   }
-  Si446x_TX(&pingInfo.response_buffer, sizeof(pingInfo.response_buffer), CHANNEL, SI446X_STATE_RX);
+  Si446x_TX(&radio_state.response_buffer, sizeof(radio_state.response_buffer), CHANNEL, SI446X_STATE_RX);
 }
 
 void SI446X_CB_RXINVALID(int16_t rssi)
 {
-	pingInfo.ready = PACKET_INVALID;
-	pingInfo.rssi = rssi;
+	radio_state.ready = PACKET_INVALID;
+	radio_state.rssi = rssi;
   Si446x_RX(CHANNEL);
 }
 
@@ -74,12 +75,14 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
 void setup()
 {
+  reset_state();
+
 	Serial.begin(500000);
 
 	pinMode(A5, OUTPUT); // LED
 
   pwm.begin();
-  pwm.setPWMFreq(1000);  // Analog servos run at ~60 Hz updates
+  pwm.setPWMFreq(50);  // Analog servos run at ~60 Hz updates
   pwm.setPWM(0, 0, 0 );
   pwm.setPWM(1, 0, 0 );
   pwm.setPWM(2, 0, 0 );
@@ -93,6 +96,10 @@ void setup()
 	Si446x_setTxPower(7); // 0dBm (1mW)
 
 	Serial.println(F("Waiting for ping..."));
+}
+
+void reset_state(){
+	memset(&radio_state, 0, sizeof(radio_state));
 }
 
 void motor1(int value){
@@ -119,6 +126,35 @@ void motor2(int value){
   }
 }
 
+void map_packet(){
+    motor1(radio_state.stick_packet.ch1 - radio_state.stick_packet.ch4);
+    motor2(radio_state.stick_packet.ch1 + radio_state.stick_packet.ch4);
+    pwm.setPWM(4, 0, radio_state.stick_packet.button1 ? 4095 : 0 );
+    pwm.setPWM(5, 0, radio_state.stick_packet.button2 ? 4095 : 0 );
+    pwm.setPWM(6, 0, radio_state.stick_packet.button2 ? 4095 : 0 );
+}
+
+void print_packet(){
+    // Serial.print(pings);
+		// Serial.print(F(" rssi:["));
+		// Serial.print(radio_state.rssi);
+		// // Serial.print(F("] length:["));
+		// // Serial.print(radio_state.length);
+		// Serial.print(F("] ch0:["));
+		// Serial.print(radio_state.stick_packet.ch1);
+		// Serial.print(F("] ch1:["));
+		// Serial.print(radio_state.stick_packet.ch2);
+		// Serial.print(F("] ch2:["));
+		// Serial.print(radio_state.stick_packet.ch3);
+		// Serial.print(F("] ch3:["));
+		// Serial.print(radio_state.stick_packet.ch4);
+		// Serial.print(F("] b1:["));
+		// Serial.print(radio_state.stick_packet.button1);
+		// Serial.print(F("] b2:["));
+		// Serial.print(radio_state.stick_packet.button2);
+		// Serial.println(F("]"));
+}
+
 void loop()
 {
 	static uint32_t pings;
@@ -128,53 +164,43 @@ void loop()
 	Si446x_RX(CHANNEL);
 
 	// Wait for data
-	while(pingInfo.ready == PACKET_NONE);
-		
-	if(pingInfo.ready != PACKET_OK)
+	uint8_t success;
+
+	// Wait for reply with timeout
+	uint32_t sendStartTime = millis();
+	while(1)
 	{
-		invalids++;
-		pingInfo.ready = PACKET_NONE;
-		Serial.print(F("Invalid rssi:["));
-		Serial.print(pingInfo.rssi);
-		Serial.println(F("]"));
-	}
-	else
-	{
-		pings++;
-		pingInfo.ready = PACKET_NONE;
-
-		// Serial.println(F("Got ping, sending reply..."));
-
-		// Send back the data, once the transmission has completed go into receive mode
-
-		// Serial.println(F("Reply sent"));
-
-		// Toggle LED
-		// static uint8_t ledState;
-		// digitalWrite(A5, ledState ? HIGH : LOW);
-		// ledState = !ledState;
-
-    Serial.print(pings);
-		Serial.print(F(" rssi:["));
-		Serial.print(pingInfo.rssi);
-		// Serial.print(F("] length:["));
-		// Serial.print(pingInfo.length);
-		// Serial.print(F("] ch0:["));
-		// Serial.print(pingInfo.stick_packet.ch1);
-		// Serial.print(F("] ch1:["));
-		// Serial.print(pingInfo.stick_packet.ch2);
-		// Serial.print(F("] ch2:["));
-		// Serial.print(pingInfo.stick_packet.ch3);
-		// Serial.print(F("] ch3:["));
-		// Serial.print(pingInfo.stick_packet.ch4);
-		Serial.println(F("]"));
-
-    motor1(pingInfo.stick_packet.ch1 - pingInfo.stick_packet.ch4);
-    motor2(pingInfo.stick_packet.ch1 + pingInfo.stick_packet.ch4);
+		success = radio_state.ready;
+		if(success != PACKET_NONE){
+      break;
+    }
+		else if(millis() - sendStartTime > TIMEOUT){
+      reset_state();
+      map_packet();
+      Serial.println(F("Timeout"));
+			break;
+    } // Timeout // TODO typecast to uint16_t
 	}
 
-	// Serial.print(F("Pings, "));
-	// Serial.print(invalids);
-	// Serial.println(F("Invalid"));
-	// Serial.println(F("------"));
+  switch(radio_state.ready){
+    case PACKET_NONE:
+      break;
+
+    case PACKET_INVALID:
+      invalids++;
+      radio_state.ready = PACKET_NONE;
+      Serial.print(F("Invalid rssi:["));
+      Serial.print(radio_state.rssi);
+      Serial.println(F("]"));
+      break;
+
+    case PACKET_OK:
+      pings++;
+      radio_state.ready = PACKET_NONE;
+      // Serial.println(F("Got ping, sending reply..."));
+
+      print_packet();
+      map_packet();
+      break;
+  }
 }

@@ -21,7 +21,7 @@
 
 #define CHANNEL 20
 #define MAX_PACKET_SIZE 10
-#define TIMEOUT 10
+#define TIMEOUT 50
 
 #define PACKET_NONE		0
 #define PACKET_OK		1
@@ -36,6 +36,9 @@ void send_packet(){
   radio_state.stick_packet.ch2 = state.matrix[2];
   radio_state.stick_packet.ch3 = state.matrix[1];
   radio_state.stick_packet.ch4 = state.matrix[0];
+
+  radio_state.stick_packet.button1 = (state.matrix[6] >= 80) && (state.matrix[6] <= 100) ? 1 : 0; // 94 BUTTON1
+  radio_state.stick_packet.button2 = (state.matrix[6] >= -1024) && (state.matrix[6] <= -950) ? 1 : 0; // -1024 BUTTON2
 
   radio_state.packet_counter++;
   if(radio_state.packet_counter>7){
@@ -98,10 +101,8 @@ void init_adc()
 
 void setup()
 {
-	memset(&radio_state, 0, sizeof(radio_state));
-  memset(&config, 0, sizeof(config));
-  memset(&state, 0, sizeof(state));
-
+  reset_state();
+  
 	Serial.begin(500000);
 
 	pinMode(LED_PIN, OUTPUT); // LED
@@ -114,6 +115,12 @@ void setup()
   SPI.setClockDivider(SPI_CLOCK_DIV2);
 //	Si446x_setTxPower(0); // -32dBm (<1uW)
 	Si446x_setTxPower(7); // 0dBm (1mW)
+}
+
+void reset_state(){
+	memset(&radio_state, 0, sizeof(radio_state));
+  memset(&config, 0, sizeof(config));
+  memset(&state, 0, sizeof(state));
 }
 
 void loop()
@@ -147,6 +154,29 @@ void loop()
 		else if(millis() - sendStartTime > TIMEOUT) // Timeout // TODO typecast to uint16_t
 			break;
 	}
+
+  Serial.print(F("] a0:["));
+  Serial.print(state.matrix[0]);
+  Serial.print(F("] a1:["));
+  Serial.print(state.matrix[1]);
+  Serial.print(F("] a2:["));
+  Serial.print(state.matrix[2]);
+  Serial.print(F("] a3:["));
+  Serial.print(state.matrix[3]);
+  Serial.print(F("] a4:["));
+  Serial.print(state.matrix[4]);
+  Serial.print(F("] a5:["));
+  Serial.print(state.matrix[5]);
+  Serial.print(F("] a6:["));
+  Serial.print(state.matrix[6]);
+  Serial.print(F("] a7:["));
+  Serial.print(state.matrix[7]);
+  Serial.print(F("] b1:["));
+  Serial.print(radio_state.stick_packet.button1);
+  Serial.print(F("] b2:["));
+  Serial.print(radio_state.stick_packet.button2);
+  Serial.println(F("]"));
+
 		
 	radio_state.ready = PACKET_NONE;
 

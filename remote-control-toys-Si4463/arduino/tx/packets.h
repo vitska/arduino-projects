@@ -6,24 +6,24 @@ typedef struct{
 	int ch2:11;
 	int ch3:11;
 	int ch4:11;
-	int button1:1;
-	int button2:1;
-	int button3:1;
-	int button4:1;
+	uint8_t button1:1;
+	uint8_t button2:1;
+	uint8_t button3:1;
+	uint8_t button4:1;
 } stickPacketStruct_t;
 
 // Use to be 6
 #define STICK_PACK_SIZE sizeof(stickPacketStruct_t)
 
 typedef struct{
-	int button1:1;
-	int button2:1;
-	int button3:1;
-	int button4:1;
-	int button5:1;
-	int button6:1;
-	int button7:1;
-	int button8:1;
+	uint8_t sw1:1;
+	uint8_t sw2:1;
+	uint8_t sw3:1;
+	uint8_t sw4:1;
+	uint8_t sw5:1;
+	uint8_t sw6:1;
+	uint8_t sw7:1;
+	uint8_t sw8:1;
 } switchPacketStruct_t;
 
 // Use to be 1
