@@ -51,13 +51,13 @@ typedef struct tag_MODEL_CONFIG{
   uint8_t   channel_map[16]; //1   //16                        
   uint16_t  Reverse;    //17  //2   // 1-16 channel reverce             
   int16_t   stick_trim[4]; //19  //8                     
-  int16_t   sub_trim[16];  //27  //32
-  int16_t   pseudo_analog[2];      //59  //4
-  SWVAL     sw_val[8];      //63  //48
-  SERVOTRAVEL travel[16];   //111 //32
-  MUXDEF    mix[6];     //143 //30
-  char      model_name[12];  //173 //12
-  uint16_t  adc_test;    //185 //2   //8x2 bits
+  // int16_t   sub_trim[16];  //27  //32
+  // int16_t   pseudo_analog[2];      //59  //4
+  // SWVAL     sw_val[8];      //63  //48
+  // SERVOTRAVEL travel[16];   //111 //32
+  // MUXDEF    mix[6];     //143 //30
+  // char      model_name[12];  //173 //12
+  // uint16_t  adc_test;    //185 //2   //8x2 bits
 //  uint8_t   filler[69];   //187 //69
                 //256
 }MODEL_CONFIG; //256
@@ -65,7 +65,7 @@ typedef struct tag_MODEL_CONFIG{
 //#define MODELS_IN_EEMEMORY 15
 
 typedef struct tag_STORED_CONFIG{
-  DEVICE_CONFIG device; // Configuration values not related to model config but require to store in nonvolatile memory
+//  DEVICE_CONFIG device; // Configuration values not related to model config but require to store in nonvolatile memory
   MODEL_CONFIG model;   // Model settings
 }STORED_CONFIG;
 extern STORED_CONFIG config;

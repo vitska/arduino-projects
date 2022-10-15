@@ -93,9 +93,10 @@ void setup()
   SPI.setClockDivider(SPI_CLOCK_DIV2);
 //	Si446x_setTxPower(SI446X_MAX_TX_POWER);
 //	Si446x_setTxPower(0); // -32dBm (<1uW)
-	Si446x_setTxPower(7); // 0dBm (1mW)
+//	Si446x_setTxPower(7); // 0dBm (1mW)
+  Si446x_setTxPower(22); // 10dBm (10mW)
 
-	Serial.println(F("Waiting for ping..."));
+	Serial.println(F("Waiting for RC..."));
 }
 
 void reset_state(){
@@ -129,9 +130,9 @@ void motor2(int value){
 void map_packet(){
     motor1(radio_state.stick_packet.ch1 - radio_state.stick_packet.ch4);
     motor2(radio_state.stick_packet.ch1 + radio_state.stick_packet.ch4);
-    pwm.setPWM(4, 0, radio_state.stick_packet.button1 ? 4095 : 0 );
-    pwm.setPWM(5, 0, radio_state.stick_packet.button2 ? 4095 : 0 );
-    pwm.setPWM(6, 0, radio_state.stick_packet.button2 ? 4095 : 0 );
+    pwm.setPWM(4, 0, radio_state.switch_packet.sw1 ? 4095 : 0 );
+    pwm.setPWM(5, 0, radio_state.switch_packet.sw2 ? 4095 : 0 );
+    pwm.setPWM(6, 0, radio_state.switch_packet.sw3 ? 4095 : 0 );
 }
 
 void print_packet(){
@@ -177,7 +178,7 @@ void loop()
 		else if(millis() - sendStartTime > TIMEOUT){
       reset_state();
       map_packet();
-      Serial.println(F("Timeout"));
+      // Serial.println(F("Timeout"));
 			break;
     } // Timeout // TODO typecast to uint16_t
 	}

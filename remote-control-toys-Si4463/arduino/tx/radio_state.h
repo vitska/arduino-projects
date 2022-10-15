@@ -10,6 +10,7 @@ typedef struct{
 typedef struct{
 	uint8_t ready;
 	uint32_t timestamp;
+  uint16_t totalTime;
 	int16_t rssi;
 	uint8_t length;
 	uint8_t packet_counter;
