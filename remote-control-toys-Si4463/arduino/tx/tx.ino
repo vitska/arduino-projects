@@ -18,6 +18,7 @@
 #include <Wire.h>
 #include "mcp23017.h"
 #include "ina219.h"
+#include "bm8001b.h"
 #include "state.h"
 #include "model_config.h"
 #include "radio_state.h"
@@ -36,6 +37,7 @@ static STORED_CONFIG config;
 
 MCP23017 ext_port;
 INA219 power;
+BM8001B lcd;
 
 void send_packet(){
   radio_state.stick_packet.ch1 = state.matrix[3];
@@ -113,6 +115,7 @@ void setup()
 	Serial.begin(500000);
 
 //  scan_i2c();
+  lcd.begin();
   power.begin(0x019F, 0x5000);
   ext_port.setPullup(MCP23017_PORTA, 0xFF);
 //  init_i2c_ports();
@@ -265,17 +268,65 @@ void print_packet(){
 		// Serial.println(F("]"));
 }
 
+uint8_t rssiToLcdThrottle(int rssi){
+  if(rssi == 0){
+    return 0;
+  }
+
+  // min = -100 max = -23
+  if(rssi <= -100){
+    rssi = -100;
+  }
+  if(rssi >= -23){
+    rssi = -23;
+  }
+  uint8_t level = (100 - (rssi*-1)) / 7;
+  // min = 0 max = 77
+
+  // Serial.print(F(":"));
+  // Serial.print(level);
+  // Serial.print(F(":"));
+  // Serial.println(radio_state.response_buffer.rssi);
+
+  return level;
+}
+
+#define BAT_MIN 3610
+#define BAT_MAX 4150
+int8_t mVtoBat(uint16_t mV){
+  // min 3610
+  // max 4150
+  // diff = 550 / 5 = 110 0 1 2 3 4
+  if(mV > BAT_MAX){
+    mV = BAT_MAX;
+  }
+  if(mV < BAT_MIN){
+    mV = BAT_MIN;
+  }
+  int8_t val = (mV - BAT_MIN) / 110;
+  Serial.print(mV);
+  Serial.print(F(":"));
+  Serial.println(val);
+
+  return val;
+}
+
 void loop()
 {
   delay(10); // overvise do not manages to receive
   read_switches(); // all heavy delay stuff goes here
-  power.getBusVoltagemV();
+  // power.getBusVoltagemV();
   power.getCurrentmA();
 	uint32_t startTime = millis();
 
   send_packet(); //tx starts
 	
   // all heavy delay stuff goes here
+  print_packet();
+  lcd.throtleLeft(rssiToLcdThrottle(radio_state.response_buffer.rssi));
+  lcd.throtleRight(rssiToLcdThrottle(radio_state.rssi));
+  lcd.bat(mVtoBat(power.getBusVoltagemV()));
+  lcd.update();
 
 	uint8_t success;
 
@@ -309,7 +360,6 @@ void loop()
     case PACKET_OK:
       radio_state.totalTime = radio_state.timestamp - startTime;
       digitalWrite(LED_PIN, HIGH);
-      print_packet();
       break;
   }
 }
