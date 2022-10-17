@@ -20,7 +20,7 @@
 
 #define CHANNEL 20
 #define MAX_PACKET_SIZE 10
-#define TIMEOUT 50
+#define TIMEOUT 500
 
 #define PACKET_NONE		0
 #define PACKET_OK		1
@@ -79,7 +79,7 @@ void setup()
 
 	Serial.begin(500000);
 
-	pinMode(A5, OUTPUT); // LED
+	// pinMode(A5, OUTPUT); // LED
 
   pwm.begin();
   pwm.setPWMFreq(50);  // Analog servos run at ~60 Hz updates
@@ -87,6 +87,9 @@ void setup()
   pwm.setPWM(1, 0, 0 );
   pwm.setPWM(2, 0, 0 );
   pwm.setPWM(3, 0, 0 );
+  pwm.setPWM(4, 0, 0 );
+  pwm.setPWM(5, 0, 0 );
+  pwm.setPWM(6, 0, 0 );
 
 	// Start up
 	Si446x_init();
@@ -176,28 +179,29 @@ void loop()
       break;
     }
 		else if(millis() - sendStartTime > TIMEOUT){
+      Serial.println(F("Timeout"));
       reset_state();
       map_packet();
-      // Serial.println(F("Timeout"));
 			break;
     } // Timeout // TODO typecast to uint16_t
 	}
+		
+	radio_state.ready = PACKET_NONE;
 
-  switch(radio_state.ready){
+  switch(success){
     case PACKET_NONE:
       break;
 
     case PACKET_INVALID:
       invalids++;
-      radio_state.ready = PACKET_NONE;
       Serial.print(F("Invalid rssi:["));
       Serial.print(radio_state.rssi);
       Serial.println(F("]"));
       break;
 
     case PACKET_OK:
-      pings++;
-      radio_state.ready = PACKET_NONE;
+      // Serial.println(pings);
+      // pings++;
       // Serial.println(F("Got ping, sending reply..."));
 
       print_packet();
