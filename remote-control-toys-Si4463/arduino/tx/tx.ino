@@ -268,32 +268,34 @@ void print_packet(){
 		// Serial.println(F("]"));
 }
 
-uint8_t rssiToLcdThrottle(int rssi){
+#define RSSI_MIN -118
+#define RSSI_MAX -46
+#define RSSI_SCALE -6
+uint8_t rssiToLcdThrottle(int8_t rssi){
   if(rssi == 0){
     return 0;
   }
 
-  // min = -100 max = -23
-  if(rssi <= -100){
-    rssi = -100;
+  if(rssi <= RSSI_MIN){
+    rssi = RSSI_MIN;
   }
-  if(rssi >= -23){
-    rssi = -23;
+  if(rssi >= RSSI_MAX){
+    rssi = RSSI_MAX;
   }
-  uint8_t level = (100 - (rssi*-1)) / 7;
-  // min = 0 max = 77
+  uint8_t level = (RSSI_MIN - rssi) / RSSI_SCALE;
+  // min = 0 max = 72
 
-  // Serial.print(F(":"));
-  // Serial.print(level);
-  // Serial.print(F(":"));
-  // Serial.println(radio_state.response_buffer.rssi);
+  Serial.print(F(":"));
+  Serial.print(level);
+  Serial.print(F(":"));
+  Serial.println(rssi);
 
   return level;
 }
 
 #define BAT_MIN 3610
 #define BAT_MAX 4150
-int8_t mVtoBat(uint16_t mV){
+int8_t mVtoItems(uint16_t mV, uint8_t count){
   // min 3610
   // max 4150
   // diff = 550 / 5 = 110 0 1 2 3 4
@@ -303,10 +305,14 @@ int8_t mVtoBat(uint16_t mV){
   if(mV < BAT_MIN){
     mV = BAT_MIN;
   }
-  int8_t val = (mV - BAT_MIN) / 110;
-  Serial.print(mV);
-  Serial.print(F(":"));
-  Serial.println(val);
+  uint8_t divider = 550 / count;
+  if(divider < 1){
+    divider = 1;
+  }
+  int8_t val = (mV - BAT_MIN) / divider;
+  // Serial.print(mV);
+  // Serial.print(F(":"));
+  // Serial.println(val);
 
   return val;
 }
@@ -323,9 +329,11 @@ void loop()
 	
   // all heavy delay stuff goes here
   print_packet();
+  
   lcd.throtleLeft(rssiToLcdThrottle(radio_state.response_buffer.rssi));
   lcd.throtleRight(rssiToLcdThrottle(radio_state.rssi));
-  lcd.bat(mVtoBat(power.getBusVoltagemV()));
+  lcd.bat(mVtoItems(power.getBusVoltagemV(), 5));
+  lcd.trimRudderGauge(mVtoItems(power.getBusVoltagemV(), 12));
   lcd.update();
 
 	uint8_t success;

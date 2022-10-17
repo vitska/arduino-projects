@@ -21,14 +21,20 @@
 #define CLK_0 digitalWrite(LCD_CLK_PIN, LOW);
 
 uint8_t lcd_data[16] = {
-	//0			//1			//2	  //3	//4	  //5	//6	  //7
-	0b00000000, 0b00000000, 0x09, 0x02, 0x80, 0x80, 0x00, 0x28,
-	//8	  //9	//10  //11	//12  //13  //14		//15 
-	0x00, 0x00, 0x90, 0x82, 0x00, 0x08, 0b10001000, 0x20
+                                            //0x80                                          //0b00001000
+	//0			    //1			    //2	  //3	  //4	  //5	  //6	  //7	  //8	  //9	  //10  //11	      //12        //13        //14		    //15
+	0b00000000, 0b00000000, 0x09, 0x02, 0x80, 0x00, 0x00, 0x28, 0x00, 0x00, 0x90, 0x00000010, 0b00000000, 0b00000000, 0b10001000, 0x20
 	};
 
-//|00000000|00000000|00000000|00000000|00000000|00000000|00000000|00000000|00000000|00000000|00000000|00000000|00000000|00000000|00000000|00000000|
-
+//|----0---|----1---|----2---|----3---|----4---|----5---|----6---|----7---|----8---|----9---|---10---|---11---|---12---|---13---|---14---|---15---|
+//|00000000|00000000|00000000|00000000|00000000|10000000|00000000|00000000|00000000|00000000|00000000|00000000|00000000|00000000|00000000|00000000|
+//                                              │└┴┴┴┴┴┴─┼┴┴┘                                         │└┴┴┼┴┴┴─┼┴┴┘└┴┴┴─┼┴┴┴┼┴┴┘
+//                                              │        └── Throtle Right                            │   │    │        │   └── Frame
+//                                              └─────────── Frame                                    │   │    │        └────── ThrotleLeft
+//                                                                                                    │   │    └── Rudder trim
+//                                                                                                    │   └─────── Center point
+//                                                                                                    └─────────── Frame
+//                                                                                                    0b10000000 00001111
 BM8001B::BM8001B() {}
 
 inline void SPI_Send (uint8_t value, uint8_t length) {
@@ -101,26 +107,26 @@ void BM8001B::update() {
 typedef struct tag_Bits{
 	struct tag_TrimBits{
 		uint8_t throttle[11];
-		uint8_t rudder[11];
+		uint8_t rudder[12];
 		uint8_t elev[11];
 		uint8_t eler[11];
 	} trim;
 	struct tag_Trottle{
-		uint8_t right[11];
-		uint8_t left[11];
+		uint8_t right[12];
+		uint8_t left[12];
 	} throtle;
 }BITS; //256
 
 const BITS bits PROGMEM = {
 	.trim = {
 		.throttle = {11,10,9,8,12,13,14,15,2,1,0},
-		.rudder = {15,14,13,12,0,1,2,3,6,5,4},
+		.rudder = {7,15,14,13,12,0,1,2,3,6,5,4},
 		.elev = {7,6,5,4,0,1,2,3,14,13,12},
 		.eler = {8,9,10,15,14,13,12,0,1,2,3}
 	},
 	.throtle = {
-		.right = {15,14,13,12,0,1,2,3,6,5,4},
-		.left = {3,2,1,0,12,13,14,15,10,9,8}
+		.right = {7,15,14,13,12,0,1,2,3,6,5,4},
+		.left = {11,3,2,1,0,12,13,14,15,10,9,8}
 	}
 };
 
@@ -136,10 +142,21 @@ int8_t limit_min_max(int8_t value, int8_t min, int8_t max){
 	return value;	
 }
 
+void BM8001B::trimRudderGauge(uint8_t value){
+	uint16_t* word = (uint16_t*)&lcd_data[11];
+	*word &= 0b0000111100000000;
+
+	for (register int8_t i = 0; i < limit_min_max(0, sizeof(bits.trim.rudder), value); i++) {
+		*word |= 1 << pgm_read_byte(&bits.trim.rudder[i]);
+	}
+}
+
+//------------- -5..5 -------------------------
 void BM8001B::trimRudder(int8_t pos){
 	uint16_t* word = (uint16_t*)&lcd_data[11];
 	*word &= 0b0000111110000000;
-	*word |= 1 << pgm_read_byte(&bits.trim.rudder[limit_min_max(-5, 5, pos) + 5]);
+	*word |= 0b0000000010000000; // frame
+	*word |= 1 << pgm_read_byte(&bits.trim.rudder[limit_min_max(-5, 5, pos) + 6]);
 }
 
 void BM8001B::trimThrottle(int8_t pos) {
@@ -167,21 +184,22 @@ void BM8001B::setMode(int8_t mode) { // 1 or 2
 }
 
 
-//------------------------------------------------------------//
+//-------------------- 0..12 ----------------------------------------//
 void BM8001B::throtleRight(uint8_t throttle){
 	uint16_t* word = (uint16_t*)&lcd_data[5];
-	*word &= 0b0000111110000000;
+	*word &= 0b0000111100000000;
 
-	for (register int8_t i = 0; i < limit_min_max(0, 11, throttle); i++) {
+	for (register int8_t i = 0; i < limit_min_max(0, sizeof(bits.throtle.right), throttle); i++) {
 		*word |= 1 << pgm_read_byte(&bits.throtle.right[i]);
 	}
 }
 
+//-------------------- 0..12 ----------------------------------------//
 void BM8001B::throtleLeft(uint8_t throttle){
 	uint16_t* word = (uint16_t*)&lcd_data[12];
-	*word &= 0b0000100011110000;
+	*word &= 0b0000000011110000;
 
-	for (register int8_t i = 0; i < limit_min_max(0, 11, throttle); i++) {
+	for (register int8_t i = 0; i < limit_min_max(0, sizeof(bits.throtle.left), throttle); i++) {
 		*word |= 1 << pgm_read_byte(&bits.throtle.left[i]);
 	}
 }

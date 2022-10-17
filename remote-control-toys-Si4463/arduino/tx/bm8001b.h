@@ -24,8 +24,9 @@ public:
   void bat(int8_t pos); // 0 - 4, 0 -> low, 4 -> full
   void ant(int8_t on); // 0 -> off, 1 -> on
   void quadro(int8_t on); // 0 -> off, 1 -> on
-  void throtleRight(uint8_t throttle); // 0 -- 11
-  void throtleLeft(uint8_t throttle); // 0 -- 11
+  void trimRudderGauge(uint8_t value); // 0 -- 12
+  void throtleRight(uint8_t throttle); // 0 -- 12
+  void throtleLeft(uint8_t throttle); // 0 -- 12
   void elevator(int8_t pos); // -5 -- 5
   void eleron(int8_t pos); // -5 -- 5
   void rudder(int8_t pos); // -7 -- 7
