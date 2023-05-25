@@ -468,10 +468,8 @@ void printChannelBusy(int channel){
 }
 
 void printChannel(struct t_channel_data *data, int channel){
-//  lcd.setCursor(0, channel);lcd.print(channel);lcd.print(":");
   lcd.setCursor(0, channel);lcd.print(data->pp);lcd.print("    ");
   lcd.setCursor(5, channel);lcd.printf("%3.1f", data->watt);lcd.print("    ");
-//  lcd.setCursor(6, channel);lcd.print(data->runMilis);
   lcd.setCursor(11, channel);lcd.printf("%4.6f", data->cumulative_kwatt_h);lcd.print(" ");
 }
 
@@ -495,29 +493,9 @@ void write_eeprom(){
 int eeprom_cnt = EEPROM_WRITE_PERIOD;
 int mqtt_publish_cnt = MQTT_PUBLISH_PERIOD;
 int mqtt_publish_channel_num = 0;
-//int channel_num = 0;
 unsigned long time_pin = 0;
 int state_machine = 0;
 int publish_state_machine = 0;
-
-// void mqtt_publish_channel(struct t_channel_data *data, int channel){
-//   if(!mqtt_connected){
-//     return;
-//   }
-
-//   char value_buf[] = "0000.000000";
-//   sprintf(value_buf, "%.1f", data->watt);
-
-//   mqtt_publish_state(channel, "W", value_buf);
-//   // sprintf(mqtt_topic_buffer, mqtt_power_topic_format, channel);
-//   // Serial.printf("Publish:[%s] value:[%s]\n", mqtt_topic_buffer, value_buf);
-//   // mqttClient.publish(mqtt_topic_buffer, 2, true, value_buf);
-
-//   // sprintf(mqtt_topic_buffer, mqtt_cumulative_power_topic_format, channel);
-//   // sprintf(value_buf, "%4.6f", data->cumulative_kwatt_h);
-//   // Serial.printf("Publish:[%s] value:[%s]\n", mqtt_topic_buffer, value_buf);
-//   // mqttClient.publish(mqtt_topic_buffer, 2, true, value_buf);
-// }
 
 void loop() {
   time_pin = millis();
@@ -553,7 +531,7 @@ void loop() {
 
     switch(publish_state_machine){
       case 0: mqtt_publish_power_all(WiFi.RSSI()); break;
-      case 1: mqtt_publish_binary("lamp-1-shape", false); break;
+      case 1: mqtt_publish_binary(publish_values[10]); break;
       case 2: mqtt_publish_energy_all(); break;
       case 3: publish_state_machine=0; return;
     }

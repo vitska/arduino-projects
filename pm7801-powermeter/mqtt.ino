@@ -118,16 +118,16 @@ void mqtt_publish_energy_all(){
 const char* binary_json_begining_format = "{\"name\":\"%s\"";
 const char* binary_json_power_channel_format = ",\"state\":%d";
 const char* binary_json_ending_format = "}";
-void mqtt_publish_binary(const char* name, bool state){
+void mqtt_publish_binary(SensorValue* psensor){
   char topic_buffer[] = "device/power/500291D66C79/500291D66C79";
-  sprintf(topic_buffer, device_topic_format, "power", device_serial, name);
+  sprintf(topic_buffer, device_topic_format, psensor->getDeviceClass(), device_serial, psensor->name);
 
   char message_buffer[] = "{\"name\":\"500291D66C79\",\"state\":\"0\"}";
   char* concat_message_ptr = message_buffer;
 
   // Assemble json
-  int printed = sprintf(concat_message_ptr, binary_json_begining_format, name);  concat_message_ptr += printed > 0 ? printed : 0;
-  printed = sprintf(concat_message_ptr, binary_json_power_channel_format, state ? 1 : 0);  concat_message_ptr += printed > 0 ? printed : 0;
+  int printed = sprintf(concat_message_ptr, binary_json_begining_format, psensor->name);  concat_message_ptr += printed > 0 ? printed : 0;
+  printed = sprintf(concat_message_ptr, binary_json_power_channel_format, , psensor->getValue() > 0 ? 1 : 0);  concat_message_ptr += printed > 0 ? printed : 0;
   printed = sprintf(concat_message_ptr, binary_json_ending_format);  concat_message_ptr += printed > 0 ? printed : 0;
 
   Serial.printf("Publish:[%s] Message:[%s]\n", topic_buffer, message_buffer);
