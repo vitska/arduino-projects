@@ -18,11 +18,11 @@ https://github.com/vitska/arduino-projects/tree/master/pm7801-powermeter
 #define CALIBRATION_700W (float)4400
 const float digital_ac_current_to_watt = CALIBRATION_700W / 700;
 
-char wifi_ssid[] = "Xiaomi_VSA1";
-char wifi_pass[] = "sv@rkas52";
+char wifi_ssid[] = "DALEKA";
+char wifi_pass[] = "*********************************";
 char mqtt_username[] = "cfg-mqtt";
 char mqtt_password[] = "Zu1aeCheeshaelaiNuuG2Ooca1vooh6fiegeek4eeboong3uatoh0ahx9eud3phu";
-IPAddress mqtt_host(192, 168, 3, 20);
+IPAddress mqtt_host(192, 168, 3, 21);
 const uint16_t mqtt_port = 1883;
 const int timezone = 3;  // hours
 const int dst = 0;

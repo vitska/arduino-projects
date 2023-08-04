@@ -127,7 +127,7 @@ void mqtt_publish_binary(SensorValue* psensor){
 
   // Assemble json
   int printed = sprintf(concat_message_ptr, binary_json_begining_format, psensor->name);  concat_message_ptr += printed > 0 ? printed : 0;
-  printed = sprintf(concat_message_ptr, binary_json_power_channel_format, , psensor->getValue() > 0 ? 1 : 0);  concat_message_ptr += printed > 0 ? printed : 0;
+  printed = sprintf(concat_message_ptr, binary_json_power_channel_format, psensor->getValue() > 0 ? 1 : 0);  concat_message_ptr += printed > 0 ? printed : 0;
   printed = sprintf(concat_message_ptr, binary_json_ending_format);  concat_message_ptr += printed > 0 ? printed : 0;
 
   Serial.printf("Publish:[%s] Message:[%s]\n", topic_buffer, message_buffer);
