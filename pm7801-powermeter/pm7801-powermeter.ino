@@ -9,6 +9,9 @@ https://github.com/vitska/arduino-projects/tree/master/pm7801-powermeter
 #include <ESP8266WiFi.h>
 #include <EEPROM.h>
 #include <Ticker.h>
+#include "config.h"
+#include "wifi_ap_scan.h"
+#include "sensors.hpp"
 #include <AsyncMqtt_Generic.h>
 
   // 102 - 17watt
@@ -18,24 +21,8 @@ https://github.com/vitska/arduino-projects/tree/master/pm7801-powermeter
 #define CALIBRATION_700W (float)4400
 const float digital_ac_current_to_watt = CALIBRATION_700W / 700;
 
-char wifi_ssid[] = "DALEKA";
-char wifi_pass[] = "*********************************";
-char mqtt_username[] = "cfg-mqtt";
-char mqtt_password[] = "Zu1aeCheeshaelaiNuuG2Ooca1vooh6fiegeek4eeboong3uatoh0ahx9eud3phu";
-IPAddress mqtt_host(192, 168, 3, 21);
-const uint16_t mqtt_port = 1883;
-const int timezone = 3;  // hours
-const int dst = 0;
-const char* device_serial = "500291D66C9M";
-
-#define LED_RED1 15
-#define LED_GREEN1 13
-#define LED_GREEN2 12
-#define LED_YELLOW1 14
-
 // #define NUMBER_OF_POWER_CHANNELS 4
 // #define NUMBER_OF_ENERGY_CHANNELS 4
-#define IN_CHANNELS_SZ 4
 #define EEPROM_WRITE_PERIOD 3000 // ~ 5 minutes
 #define MQTT_PUBLISH_PERIOD 15 //
 
@@ -44,223 +31,7 @@ ADS1115 adc0(0x48);
 LiquidCrystal_I2C lcd(0x3F, 20, 4);
 AsyncMqttClient mqttClient;
 
-struct t_channel_data{
-  uint16_t min;
-  uint16_t max;
-  uint16_t pp;
-  float watt;
-  float watt_prev;
-  uint64_t runMilis;
-  uint64_t last_millis;
-  double period_watt_h;
-  double cumulative_kwatt_h;
-  uint64_t cumulative_milis;
-  uint8_t changed;
-};
-
 t_channel_data channel[IN_CHANNELS_SZ];
-
-class SensorValue {
-  public:
-    SensorValue(const char *_name, const char *_json_property, int _ch_num){
-      name = _name;
-      json_property = _json_property;
-      ch_num = _ch_num;
-    }
-
-    const char *name;
-    const char *json_property;
-    int ch_num;
-
-    virtual const char* getDeviceClass() = 0;
-
-    virtual const char* getAdditionalDiscoveryProps() { return ",\"state_class\":\"measurement\""; }
-
-    virtual const char* getUnit() = 0;
-
-    virtual double getValue() = 0;
-
-    virtual void mqttDiscoveryPublish(AsyncMqttClient* pmqttClient){
-      char topic_buffer[] = "homeassistant/sensor/500291D66C79/500291D66C79/config";
-      sprintf(topic_buffer, "homeassistant/%s/%s/%s/config", "sensor", device_serial, name);
-
-      char state_topic[] = "device/power/500291D66C79";
-      sprintf(state_topic, "device/%s/%s", getDeviceClass(), device_serial);
-
-      char value_template[] = "{{value_json.500291D66C79|is_defined}}";
-      sprintf(value_template, "{{value_json.%s|is_defined}}", json_property);
-
-      mqtt_discovery_publish(pmqttClient, value_template, state_topic, topic_buffer);
-    }
-
-  protected:
-    void mqtt_discovery_publish(AsyncMqttClient* pmqttClient, const char* value_template, const char* state_topic, const char* topic){
-    //                                                                                                                              1                                                                                                   2                                                                                                   3                                                                                                   4
-    //                                    1         2         3         4         5         6         7         8         9         0         1         2         3         4         5         6         7         8         9         0         1         2         3         4         5         6         7         8         9         0         1         2         3         4         5         6         7         8         9         0
-    //                           123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012
-    //  char message_buffer[] = "{"unit_of_measurement":"dbm","name":"rssi","device_class":"signal_strength","value_template":"{{ value_json.rssi | is_defined }}","state_topic":"device/power/500291D66C79","unique_id":"500291D66C79-500291D66C79","device":{"identifiers":["500291D66C79"],"manufacturer":"vitska000@gmail.com","model":"PM7803","name":"PM7803 PowerMeter"}}";
-    //  char message_buffer[] = "{"unit_of_measurement":"%","name":"rssi-percent","device_class":"signal_strength","value_template":"{{ value_json.prssi | is_defined }}","state_topic":"device/power/500291D66C79","unique_id":"500291D66C79-rssi-percent","device":{"identifiers":["500291D66C79"],"manufacturer":"vitska000@gmail.com","model":"PM7803","name":"PM7803 PowerMeter"}}";
-    //  char message_buffer[] = "{"unit_of_measurement":"W","name":"power-000","device_class":"power","value_template":"{{ value_json.p000 | is_defined }}","state_topic":"device/power/500291D66C79","unique_id":"500291D66C79-power-000","device":{"identifiers":["500291D66C79"],"manufacturer":"vitska000@gmail.com","model":"PM7803","name":"PM7803 PowerMeter"}}";
-
-      const char* unit_of_measurement = getUnit();
-      char unit_of_measurement_buffer[] = "\"unit_of_measurement\":\"00000\",";
-      unit_of_measurement_buffer[0] = '\0';
-      if(unit_of_measurement != NULL){
-        sprintf(unit_of_measurement_buffer, "\"unit_of_measurement\":\"%s\",", unit_of_measurement);
-      }
-
-      char message_buffer[400];
-      const char* generic_discovery_message_format = "{\"name\":\"%s\",%s\"device_class\":\"%s\",\"value_template\":\"%s\",\"state_topic\":\"%s\"%s,\"unique_id\":\"%s-%s\",\"device\":{\"identifiers\":[\"%s\"],\"manufacturer\":\"vitska000@gmail.com\",\"model\":\"PM7803\",\"name\":\"PM7803 PowerMeter\"}}";
-      sprintf(
-        message_buffer,
-        generic_discovery_message_format,
-        name,
-        unit_of_measurement_buffer,
-        getDeviceClass(),
-        value_template,
-        state_topic,
-        getAdditionalDiscoveryProps(),
-        device_serial, //unique_id
-        name,
-        device_serial //identifiers
-        );
-
-      Serial.printf("Publish:[%s] Message:[%s]\n", topic, message_buffer);
-      digitalWrite(LED_RED1, HIGH);
-      pmqttClient->publish(topic, 1, true, message_buffer);
-    }
-
-};
-
-class PowerValue : public SensorValue {
-  public:
-    PowerValue(const char *_name, const char *_json_property, int _ch_num) : SensorValue(_name, _json_property, _ch_num){
-    }
-
-    const char* getDeviceClass() { return "power"; }
-
-    const char* getUnit() { return "W"; }
-
-    double getValue() { return channel[ch_num].watt; }
-};
-
-class PowerBinaryValue : public PowerValue {
-  public:
-    PowerBinaryValue(const char *_name, const char *_json_property) : PowerValue(_name, _json_property, -1){
-    }
-
-    const char* getUnit() { return NULL; }
-
-    const char* getAdditionalDiscoveryProps() { return ",\"payload_on\":1,\"payload_off\":0"; }
-
-    double getValue() { return 1; }
-
-    void mqttDiscoveryPublish(AsyncMqttClient* pmqttClient){
-      char topic_buffer[] = "homeassistant/binary_sensor/500291D66C79/500291D66C79/config";
-      sprintf(topic_buffer, "homeassistant/%s/%s/%s/config", "binary_sensor", device_serial, name);
-
-      char state_topic[] = "device/power/500291D66C79/500291D66C79";
-      sprintf(state_topic, "device/power/%s/%s", device_serial, name);
-
-      mqtt_discovery_publish(pmqttClient, "{{value_json.state}}", state_topic, topic_buffer);
-    }
-};
-
-class EnergyValue : public SensorValue {
-  public:
-    EnergyValue(const char *_name, const char *_json_property, int _ch_num) : SensorValue(_name, _json_property, _ch_num){
-    }
-
-    virtual const char* getAdditionalDiscoveryProps() { return ",\"state_class\":\"total\""; }
-
-    const char* getDeviceClass() { return "energy"; }
-
-    const char* getUnit() { return "kWh"; }
-
-    double getValue() { return channel[ch_num].cumulative_kwatt_h; }
-};
-
-class SumPowerValue : public PowerValue {
-  public:
-    SumPowerValue(const char *_name, const char *_json_property) : PowerValue(_name, _json_property, -1){
-    }
-
-    double getValue() { return channel[0].watt + channel[1].watt + channel[2].watt; }
-};
-
-class SumEnergyValue : public EnergyValue {
-  public:
-    SumEnergyValue(const char *_name, const char *_json_property) : EnergyValue(_name, _json_property, -1){
-    }
-
-    double getValue() { return channel[0].cumulative_kwatt_h + channel[1].cumulative_kwatt_h + channel[2].cumulative_kwatt_h; }
-};
-
-class RssiValue : public PowerValue {
-  public:
-    RssiValue(const char *_name, const char *_json_property) : PowerValue(_name, _json_property, -1){
-    }
-
-    const char* getAdditionalDiscoveryProps() { return ""; }
-
-    const char* getDeviceClass() { return "signal_strength"; }
-
-    const char* getUnit() { return "dbm"; }
-
-    double getValue() { return WiFi.RSSI(); }
-
-    void mqttDiscoveryPublish(AsyncMqttClient* pmqttClient){
-      char topic_buffer[] = "homeassistant/sensor/500291D66C79/500291D66C79/config";
-      sprintf(topic_buffer, "homeassistant/%s/%s/%s/config", "sensor", device_serial, "rssi");
-
-      char state_topic[] = "device/power/500291D66C79";
-      sprintf(state_topic, "device/power/%s", device_serial);
-
-      mqtt_discovery_publish(pmqttClient, "{{value_json.rssi|is_defined}}", state_topic, topic_buffer);
-    }
-};
-
-const int RSSI_MAX =-50;// define maximum strength of signal in dBm
-const int RSSI_MIN =-100;// define minimum strength of signal in dBm
-
-int dBmtoPercentage(int dBm)
-{
-  int quality;
-    if(dBm <= RSSI_MIN)
-    {
-        quality = 0;
-    }
-    else if(dBm >= RSSI_MAX)
-    {  
-        quality = 100;
-    }
-    else
-    {
-        quality = 2 * (dBm + 100);
-   }
-
-     return quality;
-}//dBmtoPercentage 
-
-class RssiPercentValue : public RssiValue {
-  public:
-    RssiPercentValue(const char *_name, const char *_json_property) : RssiValue(_name, _json_property){
-    }
-
-    const char* getUnit() { return "%"; }
-
-    double getValue() { return dBmtoPercentage(WiFi.RSSI()); }
-
-    void mqttDiscoveryPublish(AsyncMqttClient* pmqttClient){
-      char topic_buffer[] = "homeassistant/sensor/500291D66C79/500291D66C79/config";
-      sprintf(topic_buffer, "homeassistant/%s/%s/%s/config", "sensor", device_serial, name);
-
-      char state_topic[] = "device/power/500291D66C79";
-      sprintf(state_topic, "device/power/%s", device_serial);
-
-      mqtt_discovery_publish(pmqttClient, "{{value_json.prssi|is_defined}}", state_topic, topic_buffer);
-    }
-};
 
 SensorValue* publish_values[] = { 
   new PowerValue("in-f1", "p0", 0), /* 0 */
@@ -268,7 +39,6 @@ SensorValue* publish_values[] = {
   new PowerValue("in-f3", "p2", 2), /* 2 */
   new PowerValue("power-3", "p3", 3), /* 3 */
   new SumPowerValue("in-total", "pintt"), /* 4 */
-  //              500291D66C79
   new EnergyValue   ("energy-0", "f0e", 0), /* 5 */
   new EnergyValue   ("energy-1", "f1e", 1), /* 6 */
   new EnergyValue   ("energy-2", "f2e", 2), /* 7 */
@@ -286,72 +56,6 @@ SensorValue* power_sensor[] = { publish_values[0], publish_values[1], publish_va
 
 SensorValue* energy_sensor[] = { publish_values[5], publish_values[6], publish_values[7], publish_values[8], publish_values[9] };
 #define ENERGY_SENSOR_SZ sizeof(energy_sensor) / sizeof(energy_sensor[0])
-
-
-void listNetworksToSerial(int n){
-  Serial.print(n);
-  Serial.println(" WiFi networks found");
-  for (int i = 0; i < n; ++i) {
-    // Print SSID and RSSI for each network found
-    Serial.print(i + 1);
-    Serial.print(") ");
-    Serial.print(WiFi.SSID(i));// SSID
-
-    Serial.print(WiFi.RSSI(i));//Signal strength in dBm  
-    Serial.print("dBm (");
-    
-    Serial.print(dBmtoPercentage(WiFi.RSSI(i)));//Signal strength in %  
-    Serial.print("% )"); 
-    if(WiFi.encryptionType(i) == ENC_TYPE_NONE)
-    {
-        Serial.println(" <<***OPEN***>>");        
-    }else{
-        Serial.println();        
-    }
-
-    delay(10);
-  }
-}
-
-void init_wifi_time() // sets time
-{
-	WiFi.mode(WIFI_STA);
-  int nw_cnt = WiFi.scanNetworks();
-  if (nw_cnt == 0) {
-    Serial.println("no WiFi networks found");
-    return;
-  } else {
-    listNetworksToSerial(nw_cnt);
-  }
-  Serial.printf("Init time from WiFi [%s] ...\n", wifi_ssid);
-  lcd.setCursor(0, 0);lcd.printf("WiFi:%s", wifi_ssid);
-	WiFi.begin(wifi_ssid, wifi_pass);
-
-	while (WiFi.status() != WL_CONNECTED)
-	  {
-		  delay(1);
-	  }
-
-  digitalWrite(LED_GREEN1, HIGH);
-  Serial.print("IP Address: "); Serial.println(WiFi.localIP());
-  lcd.setCursor(0, 1);lcd.printf("IP:%s", WiFi.localIP().toString().c_str());
-
-	configTime(timezone, dst, "pool.ntp.org", "time.nist.gov");
-	delay(500);
-
-  time_t rawtime; 
-  struct tm* timeinfo;
-  time(&rawtime);
-  timeinfo = localtime(&rawtime);
-  Serial.printf("DateTime:[%04d-%02d-%02dT%02d:%02d:%02d]\n", 1900 + timeinfo->tm_year, timeinfo->tm_mon + 1, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
-  lcd.setCursor(0, 2);lcd.printf("%04d-%02d-%02dT%02d:%02d:%02d", 1900 + timeinfo->tm_year, timeinfo->tm_mon + 1, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
-  delay (2000);
-
-//12345678901234567890
-//2023-03-01T08:20:20
-	WiFi.disconnect();
-  digitalWrite(LED_GREEN1, LOW);
-}
 
 #define EEPROM_INIT_MARKER 0x1237 // change marker to reset cumulative EEPROM
 
@@ -410,7 +114,7 @@ differs for different devices, check datasheet or readme.md
   lcd.init();   // initializing the LCD
   lcd.backlight(); // Enable or Turn On the backlight 
 
-  init_wifi_time();
+  init_wifi_ap();
   mqtt_start();
 }
 
@@ -537,13 +241,4 @@ void loop() {
     }
     publish_state_machine++;
   }
-
-
-  // getAndRecalculateChannel(channel+channel_num, channel_num);
-  // printChannel(channel+channel_num, channel_num);
-  // if(++channel_num > 3){
-  //   channel_num = 0;
-  // }
-
-  // Serial.printf("%d: Loop time:[%ul]\n", state_machine, millis() - time_pin);
 }

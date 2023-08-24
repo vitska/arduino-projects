@@ -47,9 +47,9 @@ void onWifiDisconnect(const WiFiEventStationModeDisconnected& event)
 
 void connectToWifi()
 {
-  Serial.printf("Connecting to Wi-Fi [%s] ...\n", wifi_ssid);
+  Serial.printf("Connecting to Wi-Fi [%s] ...\n", selected_wifi_ap->ssid);
 	WiFi.mode(WIFI_STA);
-	WiFi.begin(wifi_ssid, wifi_pass);
+	WiFi.begin(selected_wifi_ap->ssid, selected_wifi_ap->pass);
 }
 
 void connectToMqtt()
